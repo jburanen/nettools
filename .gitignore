@@ -1,0 +1,15 @@
+﻿# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/settings.json
+*.swp
+*~
+
+# Secrets â€” never commit these
+*.pem
+*.key
+.env
+secrets/

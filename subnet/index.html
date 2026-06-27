@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NetTools — Browser-Based Network Utilities</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-bracket">[</span>
+        <span class="logo-text">NET</span>
+        <span class="logo-accent">TOOLS</span>
+        <span class="logo-bracket">]</span>
+      </div>
+      <p class="logo-sub">// browser-local utilities</p>
+    </div>
+
+    <nav class="tool-nav">
+      <div class="nav-section-label">// network</div>
+      <a href="index.html" class="nav-item active" data-tool="subnet">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">Subnet Calculator</span>
+      </a>
+      <!-- Future tools go here -->
+      <div class="nav-item disabled" title="Coming soon">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">CIDR Aggregator</span>
+        <span class="nav-badge">soon</span>
+      </div>
+      <div class="nav-item disabled" title="Coming soon">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">IP Converter</span>
+        <span class="nav-badge">soon</span>
+      </div>
+
+      <div class="nav-section-label">// utilities</div>
+      <div class="nav-item disabled" title="Coming soon">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">MAC Lookup</span>
+        <span class="nav-badge">soon</span>
+      </div>
+      <div class="nav-item disabled" title="Coming soon">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">Port Reference</span>
+        <span class="nav-badge">soon</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="footer-dot online"></span>
+      <span>all processing: local</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+        <div class="breadcrumb">
+          <span class="bc-root">nettools</span>
+          <span class="bc-sep">/</span>
+          <span class="bc-current">subnet-calculator</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="privacy-badge">
+          <span class="dot"></span>
+          zero data egress
+        </span>
+      </div>
+    </header>
+
+    <!-- Tool: Subnet Calculator -->
+    <div class="tool-view" id="tool-subnet">
+      <div class="tool-header">
+        <h1 class="tool-title">Subnet Calculator</h1>
+        <p class="tool-desc">Enter an IP address in CIDR notation or with a subnet mask. All calculations run in your browser — no data is transmitted.</p>
+      </div>
+
+      <div class="tool-body">
+        <!-- Input Panel -->
+        <section class="panel input-panel">
+          <div class="panel-label">// input</div>
+
+          <div class="input-group">
+            <label class="field-label" for="cidrInput">IP / CIDR</label>
+            <div class="input-row">
+              <input
+                type="text"
+                id="cidrInput"
+                class="mono-input large"
+                placeholder="192.168.1.0/24"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <button class="btn-primary" id="calcBtn">Calculate</button>
+            </div>
+            <div class="input-hint">Examples: <span class="hint-val" data-val="192.168.1.0/24">192.168.1.0/24</span> · <span class="hint-val" data-val="10.0.0.0/8">10.0.0.0/8</span> · <span class="hint-val" data-val="172.16.0.0/12">172.16.0.0/12</span></div>
+          </div>
+
+          <div class="divider-or">— or enter mask separately —</div>
+
+          <div class="split-input">
+            <div class="input-group half">
+              <label class="field-label" for="ipInput">IP Address</label>
+              <input type="text" id="ipInput" class="mono-input" placeholder="192.168.1.0" autocomplete="off" spellcheck="false" />
+            </div>
+            <div class="input-group half">
+              <label class="field-label" for="maskInput">Subnet Mask / Prefix</label>
+              <input type="text" id="maskInput" class="mono-input" placeholder="255.255.255.0 or /24" autocomplete="off" spellcheck="false" />
+            </div>
+          </div>
+
+          <div class="error-box" id="errorBox" style="display:none"></div>
+        </section>
+
+        <!-- Results Panel -->
+        <section class="panel results-panel" id="resultsPanel" style="display:none">
+          <div class="panel-label">// results</div>
+
+          <div class="result-grid" id="resultGrid">
+            <!-- Populated by JS -->
+          </div>
+        </section>
+
+        <!-- Visual Map Panel -->
+        <section class="panel map-panel" id="mapPanel" style="display:none">
+          <div class="panel-label">// address space map</div>
+          <div class="map-legend">
+            <span><span class="legend-dot network"></span>Network</span>
+            <span><span class="legend-dot broadcast"></span>Broadcast</span>
+            <span><span class="legend-dot usable"></span>Usable hosts</span>
+          </div>
+          <div class="addr-map" id="addrMap"></div>
+          <div class="map-note" id="mapNote"></div>
+        </section>
+
+        <!-- Subnet Split Panel -->
+        <section class="panel split-panel" id="splitPanel" style="display:none">
+          <div class="panel-label">// subnet split</div>
+          <div class="split-controls">
+            <label class="field-label">Split into /<input type="number" id="splitPrefix" class="mono-input inline" min="1" max="32" placeholder="25" /></label>
+            <button class="btn-secondary" id="splitBtn">Split</button>
+          </div>
+          <div class="subnets-table-wrap" id="subnetsTable"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/subnet.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
