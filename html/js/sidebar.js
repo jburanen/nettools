@@ -42,6 +42,11 @@
       <span class="nav-label">cppcap</span>
       <span class="nav-badge">2 weeks</span>
     </div>
+    <div class="nav-item disabled" title="Coming soon">
+      <span class="nav-icon">⬡</span>
+      <span class="nav-label">fw ctl zdebug</span>
+      <span class="nav-badge">2 weeks</span>
+    </div>
   </nav>
 
   <div class="sidebar-footer">
