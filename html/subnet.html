@@ -91,11 +91,11 @@
           <div class="panel-label">// input</div>
 
           <div class="input-group">
-            <label class="field-label" for="cidrInput">IP / CIDR</label>
+            <label class="field-label" for="subnetInput">IP / CIDR or IP + Mask</label>
             <div class="input-row">
               <input
                 type="text"
-                id="cidrInput"
+                id="subnetInput"
                 class="mono-input large"
                 placeholder="192.168.1.0/24"
                 autocomplete="off"
@@ -103,19 +103,12 @@
               />
               <button class="btn-primary" id="calcBtn">Calculate</button>
             </div>
-            <div class="input-hint">Examples: <span class="hint-val" data-val="192.168.1.0/24">192.168.1.0/24</span> · <span class="hint-val" data-val="10.0.0.0/8">10.0.0.0/8</span> · <span class="hint-val" data-val="172.16.0.0/12">172.16.0.0/12</span></div>
-          </div>
-
-          <div class="divider-or">— or enter mask separately —</div>
-
-          <div class="split-input">
-            <div class="input-group half">
-              <label class="field-label" for="ipInput">IP Address</label>
-              <input type="text" id="ipInput" class="mono-input" placeholder="192.168.1.0" autocomplete="off" spellcheck="false" />
-            </div>
-            <div class="input-group half">
-              <label class="field-label" for="maskInput">Subnet Mask / Prefix</label>
-              <input type="text" id="maskInput" class="mono-input" placeholder="255.255.255.0 or /24" autocomplete="off" spellcheck="false" />
+            <div class="input-hint">
+              Examples:
+              <span class="hint-val" data-val="192.168.1.0/24">192.168.1.0/24</span> ·
+              <span class="hint-val" data-val="10.0.0.0/8">10.0.0.0/8</span> ·
+              <span class="hint-val" data-val="172.16.0.0/12">172.16.0.0/12</span> ·
+              <span class="hint-val" data-val="192.168.1.0 255.255.255.0">192.168.1.0 255.255.255.0</span>
             </div>
           </div>
 

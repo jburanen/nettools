@@ -10,9 +10,7 @@
 
 const $ = id => document.getElementById(id);
 
-const cidrInput    = $('cidrInput');
-const ipInput      = $('ipInput');
-const maskInput    = $('maskInput');
+const subnetInput  = $('subnetInput');
 const calcBtn      = $('calcBtn');
 const errorBox     = $('errorBox');
 const resultsPanel = $('resultsPanel');
@@ -27,7 +25,7 @@ const subnetsTable = $('subnetsTable');
 const sidebar      = $('sidebar');
 const sidebarToggle = $('sidebarToggle');
 
-let currentResult = null;  // last successful calc result
+let currentResult = null;
 
 // ── Sidebar toggle (mobile) ───────────────────────────────────
 
@@ -47,36 +45,15 @@ document.addEventListener('click', e => {
 
 document.querySelectorAll('.hint-val').forEach(el => {
   el.addEventListener('click', () => {
-    cidrInput.value = el.dataset.val;
-    ipInput.value = '';
-    maskInput.value = '';
+    subnetInput.value = el.dataset.val;
     runCalculation();
-  });
-});
-
-// ── Sync inputs ───────────────────────────────────────────────
-
-cidrInput.addEventListener('input', () => {
-  if (cidrInput.value.trim()) {
-    ipInput.value = '';
-    maskInput.value = '';
-  }
-});
-
-[ipInput, maskInput].forEach(el => {
-  el.addEventListener('input', () => {
-    if (ipInput.value.trim() || maskInput.value.trim()) {
-      cidrInput.value = '';
-    }
   });
 });
 
 // ── Keyboard shortcut ─────────────────────────────────────────
 
-[cidrInput, ipInput, maskInput].forEach(el => {
-  el.addEventListener('keydown', e => {
-    if (e.key === 'Enter') runCalculation();
-  });
+subnetInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') runCalculation();
 });
 
 calcBtn.addEventListener('click', runCalculation);
@@ -87,32 +64,38 @@ function runCalculation() {
   clearError();
   splitPanel.style.display = 'none';
 
+  const raw = subnetInput.value.trim();
+
+  if (!raw) {
+    showError('Enter an IP address, CIDR notation, or IP and subnet mask.');
+    return;
+  }
+
   try {
     let result;
 
-    const cidr = cidrInput.value.trim();
-    const ip   = ipInput.value.trim();
-    const mask = maskInput.value.trim();
-
-    if (cidr) {
-      result = Subnet.calculate(cidr);
-    } else if (ip && mask) {
-      result = Subnet.calculate(ip, mask);
-    } else if (ip) {
-      // Try interpreting as bare IP with /32
-      result = Subnet.calculate(ip + '/32');
+    if (raw.includes('/')) {
+      // CIDR notation: 192.168.1.0/24
+      result = Subnet.calculate(raw);
+    } else if (raw.includes(' ')) {
+      // Space-delimited IP + mask: 192.168.1.0 255.255.255.0
+      const parts = raw.split(/\s+/);
+      if (parts.length !== 2) {
+        showError('Enter CIDR (e.g. 10.0.0.0/8) or an IP and mask separated by a space.');
+        return;
+      }
+      result = Subnet.calculate(parts[0], parts[1]);
     } else {
-      showError('Enter an IP address or CIDR notation to calculate.');
-      return;
+      // Bare IP — treat as /32 host
+      result = Subnet.calculate(raw + '/32');
     }
 
     currentResult = result;
     renderResults(result);
     renderMap(result);
-    resultsPanel.style.display  = '';
-    mapPanel.style.display      = '';
-    splitPanel.style.display    = '';
-    // Suggest a sensible default split prefix
+    resultsPanel.style.display = '';
+    mapPanel.style.display     = '';
+    splitPanel.style.display   = '';
     splitPrefix.value = Math.min(result.prefix + 1, 30);
 
   } catch (err) {
@@ -172,7 +155,7 @@ function renderResults(r) {
     resultGrid.appendChild(card);
   });
 
-  // Binary breakdown card (full width feel)
+  // Binary breakdown card (full width)
   const binCard = document.createElement('div');
   binCard.className = 'result-card';
   binCard.style.gridColumn = '1 / -1';
@@ -199,14 +182,12 @@ function renderMap(r) {
   const total = r.totalHosts;
 
   if (r.prefix < 8) {
-    // Way too large to visualise meaningfully
     mapNote.textContent =
       `Address space too large to visualise (${Subnet.commas(total)} addresses). ` +
       `Network: ${r.network}  Broadcast: ${r.broadcast}`;
     return;
   }
 
-  // Show a proportional bar using at most 512 blocks
   const MAX_BLOCKS = 512;
   const blockSize  = Math.max(1, Math.ceil(total / MAX_BLOCKS));
   const numBlocks  = Math.ceil(total / blockSize);
@@ -222,11 +203,9 @@ function renderMap(r) {
 
     const block = document.createElement('div');
     block.className = `addr-block ${cls}`;
-    // Width: proportional to how many addresses this block represents
     const weight = (endAddr - startAddr + 1) / total * 100;
     block.style.width = `${Math.max(weight, 0.1)}%`;
 
-    // Tooltip on hover
     const startIp = intToIpSimple(startAddr);
     const endIp   = intToIpSimple(endAddr);
     block.title   = startAddr === endAddr ? startIp : `${startIp} – ${endIp}`;
@@ -299,13 +278,13 @@ function renderSubnetsTable(subnets, total, truncated, newPrefix) {
 function showError(msg) {
   errorBox.textContent = `⚠ ${msg}`;
   errorBox.style.display = '';
-  cidrInput.classList.add('error');
+  subnetInput.classList.add('error');
 }
 
 function clearError() {
   errorBox.style.display = 'none';
   errorBox.textContent = '';
-  cidrInput.classList.remove('error');
+  subnetInput.classList.remove('error');
 }
 
 function escHtml(str) {
@@ -322,7 +301,7 @@ function escHtml(str) {
   const params = new URLSearchParams(window.location.search);
   const q = params.get('q');
   if (q) {
-    cidrInput.value = decodeURIComponent(q);
+    subnetInput.value = decodeURIComponent(q);
     runCalculation();
   }
 })();
