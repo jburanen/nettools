@@ -7,7 +7,7 @@ Browser-local network utilities served by nginx in Docker.
 
 ```bash
 # From the parent directory containing your main docker-compose.yml:
-docker compose up -d nettools
+docker compose up -d fwctl
 ```
 
 Open **https://fwctl.com** in your browser.

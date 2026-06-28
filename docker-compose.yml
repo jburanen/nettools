@@ -1,5 +1,12 @@
 # docker-compose.yml
 # NetTools — browser-local network utilities served via nginx
+
+# If changes are made on the web server, commit and push them to the repo:
+# cd <docker projeect directory>
+# git add -A
+# git commit -m "describe what you changed"
+# git push origin main
+
 networks:
   default:
     name: proxy_net
