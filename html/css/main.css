@@ -522,6 +522,160 @@ input  { font-family: var(--font); }
   .result-grid { grid-template-columns: 1fr; }
 }
 
+/* --- tcpdump Builder -------------------------------------- */
+
+/* Options grid: auto-fill responsive columns */
+.tcpdump-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.tcpdump-grid .input-group { margin-bottom: 0; }
+
+/* Select styled to match mono-input */
+select.mono-input {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%237a92b4' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+select.mono-input option { background: var(--bg-raised); }
+
+.filter-proto { max-width: 260px; }
+
+/* Checkbox toggle rows */
+.option-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  transition: color 0.15s;
+  user-select: none;
+}
+.toggle-row:hover { color: var(--text-primary); }
+
+.toggle-check {
+  accent-color: var(--cyan);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-flag {
+  font-size: 0.7rem;
+  color: var(--cyan);
+  border: 1px solid var(--cyan-dim);
+  padding: 1px 5px;
+  border-radius: 2px;
+  letter-spacing: 0.04em;
+}
+
+/* Filter grid — three columns (src / dst / either) */
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.filter-section-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Static hint keyword (no hover behavior) */
+.hint-val-static {
+  color: var(--cyan-dim);
+  font-family: var(--font);
+}
+
+/* Generated command output block */
+.cmd-output {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  min-height: 60px;
+}
+
+.cmd-prompt {
+  color: var(--cyan);
+  font-size: 1rem;
+  line-height: 1.6;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.cmd-output code {
+  font-family: var(--font);
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+  word-break: break-all;
+  white-space: pre-wrap;
+  flex: 1;
+}
+
+/* Copy button row */
+.cmd-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.copy-feedback {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  transition: color 0.15s;
+}
+.copy-feedback.copied { color: var(--green); }
+
+.auto-copy-note {
+  font-size: 0.72rem;
+  color: var(--cyan-dim);
+  margin-left: auto;
+  letter-spacing: 0.03em;
+  transition: opacity 0.2s;
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .tcpdump-grid  { grid-template-columns: 1fr; }
+  .filter-grid   { grid-template-columns: 1fr; }
+  .filter-proto  { max-width: 100%; }
+  .auto-copy-note { margin-left: 0; }
+}
+
 /* --- Scrollbar -------------------------------------------- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }

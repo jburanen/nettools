@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <title>NetTools — tcpdump Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-bracket">[</span>
+        <span class="logo-text">NET</span>
+        <span class="logo-accent">TOOLS</span>
+        <span class="logo-bracket">]</span>
+      </div>
+      <p class="logo-sub">// browser-local utilities</p>
+    </div>
+
+    <nav class="tool-nav">
+      <div class="nav-section-label">// network</div>
+      <a href="index.html" class="nav-item" data-tool="subnet">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">Subnet Calculator</span>
+      </a>
+      <div class="nav-item disabled" title="Coming soon">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">CIDR Aggregator</span>
+        <span class="nav-badge">soon</span>
+      </div>
+      <div class="nav-item disabled" title="Coming soon">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">IP Converter</span>
+        <span class="nav-badge">soon</span>
+      </div>
+
+      <div class="nav-section-label">// utilities</div>
+      <div class="nav-item disabled" title="Coming soon">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">MAC Lookup</span>
+        <span class="nav-badge">soon</span>
+      </div>
+      <div class="nav-item disabled" title="Coming soon">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">Port Reference</span>
+        <span class="nav-badge">soon</span>
+      </div>
+
+      <div class="nav-section-label">// command builders</div>
+      <a href="tcpdump.html" class="nav-item active" data-tool="tcpdump">
+        <span class="nav-icon">⬡</span>
+        <span class="nav-label">tcpdump Builder</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="footer-dot online"></span>
+      <span>all processing: local</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+        <div class="breadcrumb">
+          <span class="bc-root">nettools</span>
+          <span class="bc-sep">/</span>
+          <span class="bc-current">tcpdump-builder</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="privacy-badge">
+          <span class="dot"></span>
+          zero data egress
+        </span>
+      </div>
+    </header>
+
+    <!-- Tool: tcpdump Builder -->
+    <div class="tool-view" id="tool-tcpdump">
+      <div class="tool-header">
+        <h1 class="tool-title">tcpdump Builder</h1>
+        <p class="tool-desc">Fill in the fields below to construct a tcpdump capture command. The command updates live as you type and is automatically copied to your clipboard when you pause.</p>
+      </div>
+
+      <div class="tool-body">
+
+        <!-- Generated Command — shown first so it's always visible -->
+        <section class="panel" id="cmdPanel">
+          <div class="panel-label">// generated command</div>
+          <div class="cmd-output">
+            <span class="cmd-prompt">$</span>
+            <code id="cmdText">tcpdump</code>
+          </div>
+          <div class="cmd-actions">
+            <button class="btn-primary" id="copyBtn">Copy Command</button>
+            <span class="copy-feedback" id="copyFeedback"></span>
+            <span class="auto-copy-note" id="autoCopyNote"></span>
+          </div>
+        </section>
+
+        <!-- Capture Options Panel -->
+        <section class="panel input-panel">
+          <div class="panel-label">// capture options</div>
+
+          <div class="tcpdump-grid">
+            <div class="input-group">
+              <label class="field-label" for="iface">Interface</label>
+              <input
+                type="text"
+                id="iface"
+                class="mono-input"
+                placeholder="any"
+                autocomplete="off"
+                spellcheck="false"
+                list="iface-list"
+              />
+              <datalist id="iface-list">
+                <option value="any">
+                <option value="eth0">
+                <option value="eth1">
+                <option value="lo">
+                <option value="wlan0">
+                <option value="em0">
+                <option value="em1">
+                <option value="bond0">
+                <option value="tun0">
+                <option value="ens3">
+                <option value="ens4">
+              </datalist>
+              <div class="input-hint">Omit to use the default interface · "any" captures all</div>
+            </div>
+
+            <div class="input-group">
+              <label class="field-label" for="optVerbose">Verbosity</label>
+              <select id="optVerbose" class="mono-input">
+                <option value="">none</option>
+                <option value="-v">-v · verbose</option>
+                <option value="-vv">-vv · more verbose</option>
+                <option value="-vvv">-vvv · maximum</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label class="field-label" for="optCount">Packet Count (-c)</label>
+              <input
+                type="number"
+                id="optCount"
+                class="mono-input"
+                placeholder="unlimited"
+                min="1"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="field-label" for="optSnaplen">Snap Length (-s, bytes)</label>
+              <input
+                type="number"
+                id="optSnaplen"
+                class="mono-input"
+                placeholder="262144 (full packet)"
+                min="1"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="input-group">
+              <label class="field-label" for="optWrite">Write to File (-w)</label>
+              <input
+                type="text"
+                id="optWrite"
+                class="mono-input"
+                placeholder="capture.pcap"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+          </div>
+
+          <div class="option-toggles">
+            <label class="toggle-row">
+              <input type="checkbox" id="optNoResolve" class="toggle-check" />
+              <span class="toggle-label">
+                <span class="toggle-flag">-n</span>
+                Disable hostname resolution
+              </span>
+            </label>
+            <label class="toggle-row">
+              <input type="checkbox" id="optNoPortResolve" class="toggle-check" />
+              <span class="toggle-label">
+                <span class="toggle-flag">-nn</span>
+                Disable port resolution (implies -n)
+              </span>
+            </label>
+            <label class="toggle-row">
+              <input type="checkbox" id="optNoPromisc" class="toggle-check" />
+              <span class="toggle-label">
+                <span class="toggle-flag">-p</span>
+                No promiscuous mode
+              </span>
+            </label>
+            <label class="toggle-row">
+              <input type="checkbox" id="optTimestamp" class="toggle-check" />
+              <span class="toggle-label">
+                <span class="toggle-flag">-tttt</span>
+                Human-readable timestamps
+              </span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Filter Panel -->
+        <section class="panel input-panel">
+          <div class="panel-label">// filter expression</div>
+
+          <div class="input-group">
+            <label class="field-label" for="proto">Protocol</label>
+            <select id="proto" class="mono-input filter-proto">
+              <option value="">any</option>
+              <option value="tcp">tcp</option>
+              <option value="udp">udp</option>
+              <option value="icmp">icmp</option>
+              <option value="icmp6">icmp6</option>
+              <option value="arp">arp</option>
+              <option value="ip">ip (IPv4 only)</option>
+              <option value="ip6">ip6 (IPv6 only)</option>
+            </select>
+          </div>
+
+          <div class="filter-grid">
+            <div class="filter-section">
+              <div class="filter-section-label">SOURCE</div>
+              <div class="input-group">
+                <label class="field-label" for="srcHost">Host / IP</label>
+                <input
+                  type="text"
+                  id="srcHost"
+                  class="mono-input"
+                  placeholder="10.0.0.1"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+              <div class="input-group">
+                <label class="field-label" for="srcPort">Port</label>
+                <input
+                  type="text"
+                  id="srcPort"
+                  class="mono-input"
+                  placeholder="443 or https"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+            </div>
+
+            <div class="filter-section">
+              <div class="filter-section-label">DESTINATION</div>
+              <div class="input-group">
+                <label class="field-label" for="dstHost">Host / IP</label>
+                <input
+                  type="text"
+                  id="dstHost"
+                  class="mono-input"
+                  placeholder="10.0.0.2"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+              <div class="input-group">
+                <label class="field-label" for="dstPort">Port</label>
+                <input
+                  type="text"
+                  id="dstPort"
+                  class="mono-input"
+                  placeholder="80 or http"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+            </div>
+
+            <div class="filter-section">
+              <div class="filter-section-label">EITHER DIRECTION</div>
+              <div class="input-group">
+                <label class="field-label" for="host">Host / IP</label>
+                <input
+                  type="text"
+                  id="host"
+                  class="mono-input"
+                  placeholder="src or dst"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+              <div class="input-group">
+                <label class="field-label" for="port">Port</label>
+                <input
+                  type="text"
+                  id="port"
+                  class="mono-input"
+                  placeholder="src or dst"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="input-group" style="margin-top:20px">
+            <label class="field-label" for="extraFilter">Additional BPF Expression</label>
+            <input
+              type="text"
+              id="extraFilter"
+              class="mono-input"
+              placeholder="e.g. not port 22   or   greater 1024   or   net 10.0.0.0/8"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <div class="input-hint">Appended verbatim with <span class="hint-val-static">and</span>. Accepts any valid BPF filter expression.</div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="js/tcpdump.js"></script>
+</body>
+</html>
