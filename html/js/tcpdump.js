@@ -32,19 +32,6 @@ const cmdOutput     = document.querySelector('.cmd-output');
 const copyBtn       = $('copyBtn');
 const copyFeedback  = $('copyFeedback');
 const autoCopyNote  = $('autoCopyNote');
-const sidebar       = $('sidebar');
-const sidebarToggle = $('sidebarToggle');
-
-// ── Sidebar (mobile) ──────────────────────────────────────────
-
-sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
-document.addEventListener('click', e => {
-  if (sidebar.classList.contains('open') &&
-      !sidebar.contains(e.target) &&
-      e.target !== sidebarToggle) {
-    sidebar.classList.remove('open');
-  }
-});
 
 // ── Validation ────────────────────────────────────────────────
 

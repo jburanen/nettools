@@ -11,59 +11,7 @@
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
-  <!-- Sidebar Navigation -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <a href="index.html" class="logo">
-        <span class="logo-bracket">[</span>
-        <span class="logo-text">NET</span>
-        <span class="logo-accent">TOOLS</span>
-        <span class="logo-bracket">]</span>
-      </a>
-      <p class="logo-sub">// browser-local utilities</p>
-    </div>
-
-    <nav class="tool-nav">
-      <div class="nav-section-label">// network</div>
-      <a href="subnet.html" class="nav-item" data-tool="subnet">
-        <span class="nav-icon">⬡</span>
-        <span class="nav-label">Subnet Calculator</span>
-      </a>
-      <div class="nav-item disabled" title="Coming soon">
-        <span class="nav-icon">⬡</span>
-        <span class="nav-label">CIDR Aggregator</span>
-        <span class="nav-badge">soon</span>
-      </div>
-      <div class="nav-item disabled" title="Coming soon">
-        <span class="nav-icon">⬡</span>
-        <span class="nav-label">IP Converter</span>
-        <span class="nav-badge">soon</span>
-      </div>
-
-      <div class="nav-section-label">// utilities</div>
-      <div class="nav-item disabled" title="Coming soon">
-        <span class="nav-icon">⬡</span>
-        <span class="nav-label">MAC Lookup</span>
-        <span class="nav-badge">soon</span>
-      </div>
-      <div class="nav-item disabled" title="Coming soon">
-        <span class="nav-icon">⬡</span>
-        <span class="nav-label">Port Reference</span>
-        <span class="nav-badge">soon</span>
-      </div>
-
-      <div class="nav-section-label">// command builders</div>
-      <a href="tcpdump.html" class="nav-item active" data-tool="tcpdump">
-        <span class="nav-icon">⬡</span>
-        <span class="nav-label">tcpdump Builder</span>
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <span class="footer-dot online"></span>
-      <span>all processing: local</span>
-    </div>
-  </aside>
+  <div id="sidebar-mount"></div>
 
   <!-- Main Content -->
   <main class="main-content">
@@ -177,7 +125,7 @@
               </span>
             </label>
             <label class="toggle-row">
-              <input type="checkbox" id="optNoPortResolve" class="toggle-check" />
+              <input type="checkbox" id="optNoPortResolve" class="toggle-check" checked />
               <span class="toggle-label">
                 <span class="toggle-flag">-nn</span>
                 Disable port resolution (implies -n)
@@ -322,6 +270,7 @@
     </div>
   </main>
 
+  <script src="js/sidebar.js"></script>
   <script src="js/tcpdump.js"></script>
 </body>
 </html>

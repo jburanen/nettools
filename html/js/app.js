@@ -22,24 +22,7 @@ const splitPanel   = $('splitPanel');
 const splitPrefix  = $('splitPrefix');
 const splitBtn     = $('splitBtn');
 const subnetsTable = $('subnetsTable');
-const sidebar      = $('sidebar');
-const sidebarToggle = $('sidebarToggle');
-
 let currentResult = null;
-
-// ── Sidebar toggle (mobile) ───────────────────────────────────
-
-sidebarToggle.addEventListener('click', () => {
-  sidebar.classList.toggle('open');
-});
-
-document.addEventListener('click', e => {
-  if (sidebar.classList.contains('open') &&
-      !sidebar.contains(e.target) &&
-      e.target !== sidebarToggle) {
-    sidebar.classList.remove('open');
-  }
-});
 
 // ── Hint values ───────────────────────────────────────────────
 
