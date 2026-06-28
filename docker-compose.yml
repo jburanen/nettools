@@ -17,7 +17,7 @@ services:
       - "0.0.0.0:8080:80"
     volumes:
       - type: bind
-        source: ./subnet
+        source: ./html
         target: /usr/share/nginx/html
         read_only: true
       - type: bind
