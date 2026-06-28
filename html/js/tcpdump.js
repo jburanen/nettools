@@ -13,7 +13,6 @@ const $ = id => document.getElementById(id);
 const ifaceInput       = $('iface');
 const optVerbose       = $('optVerbose');
 const optCount         = $('optCount');
-const optSnaplen       = $('optSnaplen');
 const optWrite         = $('optWrite');
 const optNoResolve     = $('optNoResolve');
 const optNoPortResolve = $('optNoPortResolve');
@@ -188,7 +187,6 @@ function buildCommand() {
   const hostR    = parseHostInput(hostInput.value);
   const portR    = parsePortInput(portInput.value);
   const countR   = validatePositiveInt(optCount);
-  const snaplenR = validatePositiveInt(optSnaplen);
 
   // Update per-field error/warning messages
   setFieldMsg(srcHostInput, 'srcHostMsg', srcHostR);
@@ -198,9 +196,8 @@ function buildCommand() {
   setFieldMsg(hostInput,    'hostMsg',    hostR);
   setFieldMsg(portInput,    'portMsg',    portR);
   setFieldMsg(optCount,     'countMsg',   countR);
-  setFieldMsg(optSnaplen,   'snaplenMsg', snaplenR);
 
-  const hasErrors = [srcHostR, srcPortR, dstHostR, dstPortR, hostR, portR, countR, snaplenR]
+  const hasErrors = [srcHostR, srcPortR, dstHostR, dstPortR, hostR, portR, countR]
     .some(r => !r.valid);
 
   // Assemble command from valid fields only
@@ -222,8 +219,7 @@ function buildCommand() {
   if (optNoPromisc.checked) parts.push('-p');
   if (optTimestamp.checked)  parts.push('-tttt');
 
-  if (countR.valid   && countR.value)   parts.push('-c', countR.value);
-  if (snaplenR.valid && snaplenR.value) parts.push('-s', snaplenR.value);
+  if (countR.valid && countR.value) parts.push('-c', countR.value);
 
   const writeFile = optWrite.value.trim();
   if (writeFile) {
@@ -282,7 +278,7 @@ function updateCommand() {
 }
 
 const allInputs = [
-  ifaceInput, optVerbose, optCount, optSnaplen, optWrite,
+  ifaceInput, optVerbose, optCount, optWrite,
   optNoResolve, optNoPortResolve, optNoPromisc, optTimestamp,
   protoSelect, srcHostInput, srcPortInput, dstHostInput, dstPortInput,
   hostInput, portInput, extraFilter,

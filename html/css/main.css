@@ -68,7 +68,7 @@ input  { font-family: var(--font); }
 }
 
 .logo {
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   line-height: 1;
@@ -92,7 +92,7 @@ input  { font-family: var(--font); }
 }
 
 .nav-section-label {
-  font-size: 0.68rem;
+  font-size: 1.15rem;
   color: var(--text-muted);
   letter-spacing: 0.08em;
   padding: 12px 16px 6px;
@@ -104,7 +104,7 @@ input  { font-family: var(--font); }
   gap: 10px;
   padding: 9px 16px;
   color: var(--text-secondary);
-  font-size: 0.82rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
   border-left: 2px solid transparent;
@@ -524,13 +524,13 @@ input  { font-family: var(--font); }
 
 /* --- tcpdump Builder -------------------------------------- */
 
-/* Options grid: auto-fill responsive columns */
-.tcpdump-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+/* Side-by-side pair of inputs (verbosity + count) */
+.tcpdump-row {
+  display: flex;
   gap: 16px;
+  margin-bottom: 16px;
 }
-.tcpdump-grid .input-group { margin-bottom: 0; }
+.tcpdump-row .input-group { flex: 1; margin-bottom: 0; }
 
 /* Select styled to match mono-input */
 select.mono-input {
@@ -546,11 +546,11 @@ select.mono-input option { background: var(--bg-raised); }
 
 .filter-proto { max-width: 260px; }
 
-/* Checkbox toggle rows */
+/* Checkbox toggle rows — stacked with generous vertical spacing */
 .option-toggles {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px 28px;
+  flex-direction: column;
+  gap: 14px;
   margin-top: 20px;
   padding-top: 16px;
   border-top: 1px solid var(--border);
@@ -692,7 +692,7 @@ select.mono-input option { background: var(--bg-raised); }
 
 /* Responsive */
 @media (max-width: 720px) {
-  .tcpdump-grid  { grid-template-columns: 1fr; }
+  .tcpdump-row   { flex-direction: column; }
   .filter-grid   { grid-template-columns: 1fr; }
   .filter-proto  { max-width: 100%; }
   .auto-copy-note { margin-left: 0; }

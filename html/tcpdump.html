@@ -111,34 +111,34 @@
         <section class="panel input-panel">
           <div class="panel-label">// capture options</div>
 
-          <div class="tcpdump-grid">
-            <div class="input-group">
-              <label class="field-label" for="iface">Interface</label>
-              <input
-                type="text"
-                id="iface"
-                class="mono-input"
-                placeholder="any"
-                autocomplete="off"
-                spellcheck="false"
-                list="iface-list"
-              />
-              <datalist id="iface-list">
-                <option value="any">
-                <option value="eth0">
-                <option value="eth1">
-                <option value="lo">
-                <option value="wlan0">
-                <option value="em0">
-                <option value="em1">
-                <option value="bond0">
-                <option value="tun0">
-                <option value="ens3">
-                <option value="ens4">
-              </datalist>
-              <div class="input-hint">Omit to use the default interface · "any" captures all</div>
-            </div>
+          <div class="input-group">
+            <label class="field-label" for="iface">Interface</label>
+            <input
+              type="text"
+              id="iface"
+              class="mono-input"
+              placeholder="any"
+              autocomplete="off"
+              spellcheck="false"
+              list="iface-list"
+            />
+            <datalist id="iface-list">
+              <option value="any">
+              <option value="eth0">
+              <option value="eth1">
+              <option value="lo">
+              <option value="wlan0">
+              <option value="em0">
+              <option value="em1">
+              <option value="bond0">
+              <option value="tun0">
+              <option value="ens3">
+              <option value="ens4">
+            </datalist>
+            <div class="input-hint">Omit to use the default interface · "any" captures all</div>
+          </div>
 
+          <div class="tcpdump-row">
             <div class="input-group">
               <label class="field-label" for="optVerbose">Verbosity</label>
               <select id="optVerbose" class="mono-input">
@@ -148,7 +148,6 @@
                 <option value="-vvv">-vvv · maximum</option>
               </select>
             </div>
-
             <div class="input-group">
               <label class="field-label" for="optCount">Packet Count (-c)</label>
               <input
@@ -161,36 +160,23 @@
               />
               <div class="field-msg" id="countMsg"></div>
             </div>
+          </div>
 
-            <div class="input-group">
-              <label class="field-label" for="optSnaplen">Snap Length (-s, bytes)</label>
-              <input
-                type="number"
-                id="optSnaplen"
-                class="mono-input"
-                placeholder="262144 (full packet)"
-                min="1"
-                autocomplete="off"
-              />
-              <div class="field-msg" id="snaplenMsg"></div>
-            </div>
-
-            <div class="input-group">
-              <label class="field-label" for="optWrite">Write to File (-w)</label>
-              <input
-                type="text"
-                id="optWrite"
-                class="mono-input"
-                placeholder="capture.pcap"
-                autocomplete="off"
-                spellcheck="false"
-              />
-            </div>
+          <div class="input-group">
+            <label class="field-label" for="optWrite">Write to File (-w)</label>
+            <input
+              type="text"
+              id="optWrite"
+              class="mono-input"
+              placeholder="capture.pcap"
+              autocomplete="off"
+              spellcheck="false"
+            />
           </div>
 
           <div class="option-toggles">
             <label class="toggle-row">
-              <input type="checkbox" id="optNoResolve" class="toggle-check" />
+              <input type="checkbox" id="optNoResolve" class="toggle-check" checked />
               <span class="toggle-label">
                 <span class="toggle-flag">-n</span>
                 Disable hostname resolution
