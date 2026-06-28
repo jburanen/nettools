@@ -187,7 +187,7 @@ input  { font-family: var(--font); }
   line-height: 1;
 }
 
-.breadcrumb { font-size: 0.8rem; color: var(--text-muted); }
+.breadcrumb { font-size: 1rem; color: var(--text-muted); }
 .bc-sep { margin: 0 5px; }
 .bc-current { color: var(--text-secondary); }
 
