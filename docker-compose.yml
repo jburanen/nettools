@@ -1,5 +1,9 @@
 # docker-compose.yml
 # NetTools — browser-local network utilities served via nginx
+networks:
+  default:
+    name: proxy_net
+    external: true
 
 services:
   fwctl:
