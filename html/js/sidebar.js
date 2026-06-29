@@ -59,7 +59,7 @@
       </svg>
       github.com/jburanen/nettools
     </a>
-    <p class="meta-disclaimer">Created with Claude. Accuracy not guaranteed.</p>
+    <p class="meta-disclaimer">Created with Claude.<br>Accuracy not guaranteed.</p>
   </div>
 </aside>`;
 
