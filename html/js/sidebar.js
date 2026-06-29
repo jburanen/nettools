@@ -65,7 +65,7 @@
       </svg>
       github.com/jburanen/nettools
     </a>
-    <p class="meta-disclaimer"><a href="https://choosealicense.com/licenses/gpl-3.0/" class="meta-github" target="_blank" rel="noopener">GNU GPLv3</a><br>Accuracy not guaranteed.<br>If something doesn't work,<br>it's Claude's fault.</p>
+    <p class="meta-disclaimer"><a href="https://choosealicense.com/licenses/gpl-3.0/" class="meta-github" target="_blank" rel="noopener">GNU GPLv3</a><br>Accuracy not guaranteed.<br>If something doesn't work, it's Claude's fault.</p>
   </div>
 </aside>`;
 
