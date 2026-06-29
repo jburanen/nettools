@@ -114,7 +114,12 @@ Edit `GITHUB_USER`, `WEBHOOK_SECRET`, and other variables at the top of the scri
 - Compose Converter
 - cppcap Builder
 - fw ctl zdebug Builder
+- IKE debug Builder
+
+### Tangent projects that can't be browser local and might spin off
+
 - Troubleshooting Coach
+- URL shortener
 
 ---
 
