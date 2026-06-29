@@ -174,6 +174,13 @@ input  { font-family: var(--font); }
 }
 .meta-github:hover { color: var(--cyan); }
 
+.meta-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.meta-link:hover { color: var(--cyan); }
+
 .meta-disclaimer {
   font-size: 0.65rem;
   color: var(--text-muted);
