@@ -21,11 +21,10 @@
     </a>
 
     <div class="nav-section-label">// utilities</div>
-    <div class="nav-item disabled" title="Coming soon">
+    <a href="compose-converter.html" class="nav-item" data-tool="compose-converter">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">Compose Converter</span>
-      <span class="nav-badge">2 weeks</span>
-    </div>
+    </a>
 
     <div class="nav-section-label">// command builders</div>
     <a href="tcpdump.html" class="nav-item" data-tool="tcpdump">
@@ -75,7 +74,7 @@
 
   // Mark the active nav item based on the current page filename
   const page = window.location.pathname.split('/').pop() || 'index.html';
-  const toolMap = { 'subnet.html': 'subnet', 'tcpdump.html': 'tcpdump', 'fw-monitor.html': 'fw-monitor' };
+  const toolMap = { 'subnet.html': 'subnet', 'tcpdump.html': 'tcpdump', 'fw-monitor.html': 'fw-monitor', 'compose-converter.html': 'compose-converter' };
   const activeTool = toolMap[page];
   if (activeTool) {
     const link = document.querySelector(`.nav-item[data-tool="${activeTool}"]`);

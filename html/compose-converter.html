@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <title>NetTools — Compose Converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <div id="sidebar-mount"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+        <div class="breadcrumb">
+          <span class="bc-root">// utilities</span>
+          <span class="bc-sep">/</span>
+          <span class="bc-current">compose-converter</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="tool-view" id="tool-compose-converter">
+      <div class="tool-header">
+        <h1 class="tool-title">Compose Converter</h1>
+        <p class="tool-desc">Paste a <code style="color:var(--cyan);font-size:inherit">docker run</code> command to get a <code style="color:var(--cyan);font-size:inherit">docker-compose.yml</code>, or paste a compose file to get the equivalent <code style="color:var(--cyan);font-size:inherit">docker run</code> command(s). Direction is detected automatically.</p>
+      </div>
+
+      <div class="tool-body">
+
+        <section class="panel input-panel">
+          <div class="panel-label">// input</div>
+          <div class="input-group" style="margin-bottom:0">
+            <textarea
+              id="converterInput"
+              class="mono-input compose-input"
+              placeholder="Paste a docker run command or docker-compose.yml here…"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+            ></textarea>
+          </div>
+          <div id="detectionBadge" class="detection-badge"></div>
+        </section>
+
+        <section class="panel" id="outputPanel" style="display:none">
+          <div class="panel-label" id="outputLabel">// output</div>
+          <div id="outputBlocks"></div>
+          <div id="warningList" class="warning-list"></div>
+          <div class="cmd-actions">
+            <button class="btn-primary" id="copyOutputBtn">Copy</button>
+            <span class="copy-feedback" id="copyOutputFeedback"></span>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="js/sidebar.js"></script>
+  <script src="js/compose-converter.js"></script>
+</body>
+</html>

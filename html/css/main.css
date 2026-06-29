@@ -783,6 +783,73 @@ select.mono-input option { background: var(--bg-raised); }
 }
 .tool-card:hover .tool-card-arrow { color: var(--cyan); }
 
+/* --- Compose Converter ------------------------------------ */
+
+.compose-input {
+  min-height: 180px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.detection-badge {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+  min-height: 16px;
+  transition: color 0.2s;
+}
+.detection-run,
+.detection-compose { color: var(--cyan); }
+.detection-unknown  { color: var(--amber); }
+
+.compose-output-pre {
+  font-family: var(--font);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  background: var(--bg-base);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  overflow-x: auto;
+  white-space: pre;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.service-block-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+}
+
+.convert-error {
+  font-size: 0.82rem;
+  color: var(--amber);
+  padding: 10px 0 14px;
+}
+
+.warning-list { margin-bottom: 14px; }
+
+.warning-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.warning-items li {
+  font-size: 0.72rem;
+  color: var(--amber);
+  padding-left: 14px;
+  position: relative;
+  line-height: 1.5;
+}
+.warning-items li::before {
+  content: '!';
+  position: absolute;
+  left: 0;
+}
+
 /* --- Scrollbar -------------------------------------------- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }
