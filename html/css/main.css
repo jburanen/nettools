@@ -155,6 +155,31 @@ input  { font-family: var(--font); }
 }
 .footer-dot.online { background: var(--green); box-shadow: 0 0 6px var(--green); }
 
+.sidebar-meta {
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meta-github {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.meta-github:hover { color: var(--cyan); }
+
+.meta-disclaimer {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
 /* --- Main -------------------------------------------------- */
 .main-content {
   flex: 1;
