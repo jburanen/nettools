@@ -25,11 +25,16 @@ nettools/
 │   └── default.conf
 └── html/                   # web root (bind-mounted into the container)
     ├── index.html
+    ├── subnet.html
+    ├── tcpdump.html
+    ├── fw-monitor.html
     ├── css/
     │   └── main.css
     └── js/
-        ├── subnet.js       # pure calculation library
-        └── app.js          # UI controller
+        ├── sidebar.js      # shared sidebar, nav, and mobile toggle
+        ├── subnet.js       # subnet calculator logic
+        ├── tcpdump.js      # tcpdump command builder
+        └── fw-monitor.js   # fw monitor command builder
 ```
 
 ---
@@ -51,45 +56,12 @@ The `html/` directory and `nginx/default.conf` are bind-mounted read-only into t
 
 ---
 
-## Commands
-
-| Command | Action |
-|---------|--------|
-| `docker compose up -d --build` | Build and start in background |
-| `docker compose down` | Stop and remove containers |
-| `docker compose build` | Rebuild image only |
-| `docker compose logs -f fwctl` | Tail nginx logs |
-
-### Changing the port
-
-Edit `docker-compose.yml`:
-```yaml
-ports:
-  - "0.0.0.0:9000:80"
-```
-
----
-
-## Deployment
-
-### Manual deploy (Windows — deploy.ps1)
-
-Pushes local files to the server via SCP and commits to GitHub in one step:
-
-```powershell
-.\deploy.ps1
-# or with a commit message:
-.\deploy.ps1 -m "fix subnet broadcast edge case"
-```
-
-Edit the variables at the top of `deploy.ps1` to match your server hostname and path.
-
 ### Automated deploy via GitHub webhook (server-setup.sh)
 
 `server-setup.sh` is a one-time setup script for an Ubuntu server that:
 
 1. Installs git, Docker, and the `webhook` daemon
-2. Clones the repo to `/opt/nettools`
+2. Clones the repo to the location you specify
 3. Writes a deploy script (`/usr/local/bin/nettools-deploy`) that pulls from GitHub and restarts the container
 4. Configures a systemd service for the webhook listener
 5. Opens the webhook port in ufw
@@ -118,12 +90,30 @@ Edit `GITHUB_USER`, `WEBHOOK_SECRET`, and other variables at the top of the scri
 - URL parameter support: `?q=10.0.0.0/8` auto-calculates on load
 - Bare IP input defaults to `/32`
 
-### Coming soon (placeholder nav entries)
+### tcpdump Builder
 
-- CIDR Aggregator
-- IP Converter
-- MAC Lookup
-- Port Reference
+- Live command preview — updates as you type, auto-copies after a short pause
+- Interface selection with common interface suggestions
+- Verbosity (`-v` / `-vv` / `-vvv`), packet count (`-c`), and write-to-file (`-w`)
+- Toggles for `-n` / `-nn` (disable resolution), `-p` (no promiscuous mode), `-tttt` (timestamps)
+- BPF filter builder: protocol, source host/port, destination host/port, either-direction host/port
+- CIDR input (`10.0.0.0/24`) auto-translated to BPF `net` syntax with host-bit correction
+- Per-field validation with inline error and warning messages
+
+### fw monitor Builder
+
+- Live command preview with auto-copy
+- Inspection point mask (`-m`) — independent toggles for `i` (pre-inbound), `I` (post-inbound), `o` (pre-outbound), `O` (post-outbound)
+- Packet count (`-c`), output file (`-o`) with one-click default path fill and clear, DNS resolution toggle (`-u`)
+- Filter expression builder: protocol by number (TCP=6, UDP=17, ICMP=1, ESP=50, AH=51), source/destination/either-direction host and port
+- CIDR ranges translated to fw monitor mask syntax: `(src & 255.255.255.0) = 10.0.0.0`
+- Output is a valid pcap file readable by Wireshark
+
+### Coming soon
+
+- Compose Converter
+- cppcap Builder
+- fw ctl zdebug Builder
 
 ---
 
