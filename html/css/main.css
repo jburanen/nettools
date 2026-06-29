@@ -58,7 +58,7 @@ input  { font-family: var(--font); }
   flex-direction: column;
   position: fixed;
   top: 0; left: 0;
-  z-index: 100;
+  z-index: 300;
   transition: transform 0.2s ease;
 }
 
