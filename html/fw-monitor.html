@@ -53,19 +53,6 @@
 
           <div class="tcpdump-row">
             <div class="input-group">
-              <label class="field-label" for="optSnaplen">Snap Length (-s)</label>
-              <input
-                type="number"
-                id="optSnaplen"
-                class="mono-input"
-                placeholder="68 (default)"
-                min="0"
-                autocomplete="off"
-              />
-              <div class="input-hint">0 = full packet · 68 = headers only (default) · 1500 = typical MTU</div>
-              <div class="field-msg" id="snaplenMsg"></div>
-            </div>
-            <div class="input-group">
               <label class="field-label" for="optCount">Packet Count (-c)</label>
               <input
                 type="number"
@@ -77,19 +64,22 @@
               />
               <div class="field-msg" id="countMsg"></div>
             </div>
-          </div>
-
-          <div class="input-group">
-            <label class="field-label" for="optOutput">Output File (-o)</label>
-            <input
-              type="text"
-              id="optOutput"
-              class="mono-input"
-              placeholder="/var/log/fw/capture.cap"
-              autocomplete="off"
-              spellcheck="false"
-            />
-            <div class="input-hint">Writes a pcap file readable by Wireshark · Omit to print to stdout</div>
+            <div class="input-group" style="flex:2">
+              <label class="field-label" for="optOutput">Output File (-o)</label>
+              <input
+                type="text"
+                id="optOutput"
+                class="mono-input"
+                placeholder="omit to print to stdout"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <div class="input-hint">
+                pcap readable by Wireshark ·
+                <span class="hint-val" id="fillDefaultPath">use default path</span>
+                · <span class="hint-val" id="clearOutput">clear</span>
+              </div>
+            </div>
           </div>
 
           <div class="option-toggles">

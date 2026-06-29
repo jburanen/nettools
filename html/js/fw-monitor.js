@@ -11,7 +11,6 @@ const $ = id => document.getElementById(id);
 
 // ── DOM refs ──────────────────────────────────────────────────
 
-const optSnaplen   = $('optSnaplen');
 const optCount     = $('optCount');
 const optOutput    = $('optOutput');
 const optNoResolve = $('optNoResolve');
@@ -124,18 +123,6 @@ function parsePortInput(raw) {
   return { valid: false, error: 'Enter a port number (1–65535)' };
 }
 
-function validateNonNegativeInt(el) {
-  const s = el.value.trim();
-  if (!s) {
-    return (el.validity && el.validity.badInput)
-      ? { valid: false, error: 'Must be a non-negative integer' }
-      : { valid: true, value: null };
-  }
-  const n = parseInt(s, 10);
-  if (isNaN(n) || n < 0) return { valid: false, error: 'Must be a non-negative integer' };
-  return { valid: true, value: String(n) };
-}
-
 function validatePositiveInt(el) {
   const s = el.value.trim();
   if (!s) {
@@ -177,7 +164,6 @@ function buildCommand() {
   const dstPortR = parsePortInput(dstPortInput.value);
   const hostR    = parseHostInput(hostInput.value);
   const portR    = parsePortInput(portInput.value);
-  const snaplenR = validateNonNegativeInt(optSnaplen);
   const countR   = validatePositiveInt(optCount);
 
   setFieldMsg(srcHostInput, 'srcHostMsg', srcHostR);
@@ -186,7 +172,6 @@ function buildCommand() {
   setFieldMsg(dstPortInput, 'dstPortMsg', dstPortR);
   setFieldMsg(hostInput,    'hostMsg',    hostR);
   setFieldMsg(portInput,    'portMsg',    portR);
-  setFieldMsg(optSnaplen,   'snaplenMsg', snaplenR);
   setFieldMsg(optCount,     'countMsg',   countR);
 
   // Inspection point mask — must have at least one point selected
@@ -206,14 +191,12 @@ function buildCommand() {
   }
 
   const hasErrors = noMask ||
-    [srcHostR, srcPortR, dstHostR, dstPortR, hostR, portR, snaplenR, countR].some(r => !r.valid);
+    [srcHostR, srcPortR, dstHostR, dstPortR, hostR, portR, countR].some(r => !r.valid);
 
   // Assemble command
   const parts = ['fw monitor'];
 
   if (mask) parts.push('-m', mask);
-
-  if (snaplenR.valid && snaplenR.value !== null) parts.push('-s', snaplenR.value);
 
   if (countR.valid && countR.value) parts.push('-c', countR.value);
 
@@ -288,7 +271,7 @@ function updateCommand() {
 
 const allInputs = [
   ptI_lower, ptI_upper, ptO_lower, ptO_upper,
-  optSnaplen, optCount, optOutput, optNoResolve,
+  optCount, optOutput, optNoResolve,
   protoSelect, srcHostInput, srcPortInput, dstHostInput, dstPortInput,
   hostInput, portInput,
 ];
@@ -316,6 +299,20 @@ copyBtn.addEventListener('click', () => {
   }).catch(() => {
     copyFeedback.textContent = 'copy failed — select manually';
   });
+});
+
+// ── Output file quick actions ─────────────────────────────────
+
+$('fillDefaultPath').addEventListener('click', () => {
+  optOutput.value = '/var/log/fw/capture.cap';
+  updateCommand();
+  optOutput.focus();
+});
+
+$('clearOutput').addEventListener('click', () => {
+  optOutput.value = '';
+  updateCommand();
+  optOutput.focus();
 });
 
 // ── Initial render (no auto-copy on load) ────────────────────
