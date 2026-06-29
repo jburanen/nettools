@@ -11,20 +11,20 @@
   --bg-raised:     #161c2a;
   --bg-hover:      #1c2436;
 
-  --border:        #1e2a3f;
-  --border-bright: #2a3d5c;
+  --border:        #253045;
+  --border-bright: #344f6e;
 
   --cyan:          #4dd9c0;
-  --cyan-dim:      #2a7d6e;
+  --cyan-dim:      #3aad96;
   --cyan-glow:     rgba(77,217,192,0.15);
 
   --amber:         #e6a817;
   --red:           #e05c5c;
   --green:         #5ce08a;
 
-  --text-primary:  #d4dff0;
-  --text-secondary:#7a92b4;
-  --text-muted:    #3d5070;
+  --text-primary:  #e2eaf8;
+  --text-secondary:#94aecb;
+  --text-muted:    #647d9a;
 
   --radius:        4px;
   --sidebar-w:     240px;
@@ -76,7 +76,7 @@ input  { font-family: var(--font); }
   color: inherit;
   text-decoration: none;
 }
-.logo-bracket { color: var(--text-muted); }
+.logo-bracket { color: var(--text-secondary); }
 .logo-text    { color: var(--text-primary); }
 .logo-accent  { color: var(--cyan); }
 
@@ -96,7 +96,7 @@ input  { font-family: var(--font); }
 
 .nav-section-label {
   font-size: .85rem;
-  color: var(--text-secondary);
+  color: var(--cyan);
   letter-spacing: 0.08em;
   padding: 12px 16px 6px;
 }
@@ -106,7 +106,7 @@ input  { font-family: var(--font); }
   align-items: center;
   gap: 10px;
   padding: 9px 16px;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
@@ -190,9 +190,9 @@ input  { font-family: var(--font); }
   line-height: 1;
 }
 
-.breadcrumb { font-size: 1rem; color: var(--text-muted); }
+.breadcrumb { font-size: 1rem; color: var(--text-secondary); }
 .bc-sep { margin: 0 5px; }
-.bc-current { color: var(--text-secondary); }
+.bc-current { color: var(--text-primary); }
 
 .privacy-badge {
   font-size: 0.7rem;
@@ -542,7 +542,7 @@ input  { font-family: var(--font); }
 select.mono-input {
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%237a92b4' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2394aecb' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 32px;
