@@ -58,8 +58,8 @@
   </nav>
 
   <div class="sidebar-footer">
-    <span class="footer-dot online"></span>
-    <span>all processing: local</span>
+    <span class="footer-dot online" id="sidebarProcessingDot"></span>
+    <span id="sidebarProcessingText">all processing: local</span>
   </div>
   <div class="sidebar-meta">
     <a href="https://github.com/jburanen/nettools" class="meta-github" target="_blank" rel="noopener">

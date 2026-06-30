@@ -211,22 +211,24 @@ const app = {
   connected:      false,
   connecting:     false,
   connectTime:    null,
-  subscriptions:  [],          // active filter strings
   tree:           _makeNode(), // root (no segment of its own)
   totalMsgs:      0,
   topicSet:       new Set(),
   clockTick:      null,
   sessionTimeout: null,
+  detailTopic:    null,        // topic currently shown in the JSON detail drawer
 };
 
 function _makeNode() {
   return {
     children:    new Map(),  // segment → child node
-    value:       null,       // string | null (null = intermediate branch)
+    value:       null,       // display string | null (null = intermediate branch)
+    rawJson:     null,       // parsed JSON object/array, or null if not JSON
+    topicPath:   null,       // full topic string for leaf nodes
     count:       0,          // message count at this topic path
     lastUpdated: null,       // ms timestamp
-    expanded:    true,
-    dom: { row: null, value: null, age: null, count: null }
+    expanded:    false,
+    dom: { row: null, value: null, age: null, count: null, jsonBtn: null }
   };
 }
 
@@ -235,24 +237,31 @@ function _makeNode() {
 
 const _$ = id => document.getElementById(id);
 const els = {
-  broker:      _$('mqttBroker'),
-  port:        _$('mqttPort'),
-  username:    _$('mqttUsername'),
-  password:    _$('mqttPassword'),
-  connectBtn:  _$('mqttConnectBtn'),
-  statusDot:   _$('mqttStatusDot'),
-  statusText:  _$('mqttStatusText'),
-  errorMsg:    _$('mqttError'),
-  subPanel:    _$('mqttSubPanel'),
-  topicInput:  _$('mqttTopicInput'),
-  subBtn:      _$('mqttSubBtn'),
-  subsList:    _$('mqttSubsList'),
-  treePanel:   _$('mqttTreePanel'),
-  stats:       _$('mqttStats'),
-  tree:        _$('mqttTree'),
-  expandAll:   _$('mqttExpandAllBtn'),
-  collapseAll: _$('mqttCollapseAllBtn'),
-  clearBtn:    _$('mqttClearBtn'),
+  proto:         _$('mqttProto'),
+  broker:        _$('mqttBroker'),
+  port:          _$('mqttPort'),
+  pathGroup:     _$('mqttPathGroup'),
+  path:          _$('mqttPath'),
+  username:      _$('mqttUsername'),
+  password:      _$('mqttPassword'),
+  connectBtn:    _$('mqttConnectBtn'),
+  statusDot:     _$('mqttStatusDot'),
+  statusText:    _$('mqttStatusText'),
+  errorMsg:      _$('mqttError'),
+  hint:          _$('mqttHint'),
+  proxyWarning:  _$('mqttProxyWarning'),
+  treePanel:     _$('mqttTreePanel'),
+  stats:         _$('mqttStats'),
+  tree:          _$('mqttTree'),
+  expandAll:     _$('mqttExpandAllBtn'),
+  collapseAll:   _$('mqttCollapseAllBtn'),
+  clearBtn:      _$('mqttClearBtn'),
+  detail:        _$('mqttDetail'),
+  detailHeader:  _$('mqttDetailHeader'),
+  detailTopic:   _$('mqttDetailTopic'),
+  detailMeta:    _$('mqttDetailMeta'),
+  detailBody:    _$('mqttDetailBody'),
+  detailClose:   _$('mqttDetailClose'),
 };
 
 
@@ -265,13 +274,43 @@ els.connectBtn.addEventListener('click', () => {
 
 els.broker.addEventListener('keydown', e => { if (e.key === 'Enter') doConnect(); });
 
+function _updateProxyWarning() {
+  const useWss = els.proto.value === 'wss';
+  els.pathGroup.style.display      = useWss ? '' : 'none';
+  els.proxyWarning.style.display   = useWss ? 'none' : '';
+  els.hint.textContent = useWss
+    ? 'Connects directly to the broker over WebSocket+TLS. Broker must have WebSocket support and a trusted certificate.'
+    : 'Connects via local proxy over native MQTT TCP. No WebSocket required on the broker.';
+  const dot  = document.getElementById('sidebarProcessingDot');
+  const text = document.getElementById('sidebarProcessingText');
+  if (dot && text) {
+    if (useWss) {
+      dot.className  = 'footer-dot online';
+      text.textContent = 'all processing: local';
+    } else {
+      dot.className  = 'footer-dot proxy';
+      text.textContent = 'MQTT: proxied via web server';
+    }
+  }
+}
+
+els.proto.addEventListener('change', _updateProxyWarning);
+_updateProxyWarning(); // apply on page load (mqtt:// is the default)
+
 function doConnect() {
   const broker = els.broker.value.trim();
   if (!broker) { _showError('Enter a broker address.'); return; }
 
-  const port  = els.port.value.trim() || '1883';
-  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-  const url   = `${proto}://${location.host}/mqtt-proxy?host=${encodeURIComponent(broker)}&port=${encodeURIComponent(port)}`;
+  const port    = els.port.value.trim() || '1883';
+  const useWss  = els.proto.value === 'wss';
+  let url;
+  if (useWss) {
+    const wsPath = (els.path.value.trim() || '/mqtt').replace(/^\/?/, '/');
+    url = `wss://${broker}:${port}${wsPath}`;
+  } else {
+    const wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
+    url = `${wsProto}://${location.host}/mqtt-proxy?host=${encodeURIComponent(broker)}&port=${encodeURIComponent(port)}`;
+  }
 
   _hideError();
   _setStatus('connecting');
@@ -288,23 +327,17 @@ function doConnect() {
     app.sessionTimeout  = setTimeout(_doSessionTimeout, SESSION_TIMEOUT_MS);
     _setStatus('connected', broker + ':' + port);
     els.connectBtn.textContent = 'Disconnect';
-    els.subPanel.style.display = '';
-    // Re-subscribe to any previously active filters
-    for (const f of app.subscriptions) app.client.subscribe(f);
-    // Default: subscribe to all topics if nothing active
-    if (app.subscriptions.length === 0) _addSub('#');
+    app.client.subscribe('#');  // browse-only: subscribe to all topics
     _startClock();
   };
 
   app.client.onDisconnect = () => {
     els.password.value = ''; // clear in case the broker dropped before CONNACK (onConnect never fired)
     _clearSessionTimeout();
-    const wasConn = app.connected;
     app.connected  = false;
     app.connecting = false;
     _setStatus('disconnected');
     els.connectBtn.textContent = 'Connect';
-    if (wasConn) els.subPanel.style.display = 'none';
     _stopClock();
   };
 
@@ -333,7 +366,6 @@ function doDisconnect() {
   app.connecting = false;
   _setStatus('disconnected');
   els.connectBtn.textContent = 'Connect';
-  els.subPanel.style.display = 'none';
   _stopClock();
 }
 
@@ -357,46 +389,6 @@ window.addEventListener('pagehide', () => {
 });
 
 
-// ─── Subscriptions ────────────────────────────────────────────────────────────
-
-els.subBtn.addEventListener('click', () => _addSub(els.topicInput.value.trim() || '#'));
-els.topicInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') _addSub(els.topicInput.value.trim() || '#');
-});
-
-function _addSub(filter) {
-  if (!filter || app.subscriptions.includes(filter)) { els.topicInput.value = ''; return; }
-  app.subscriptions.push(filter);
-  if (app.connected && app.client) app.client.subscribe(filter);
-  els.topicInput.value = '';
-  _renderSubsList();
-}
-
-function _removeSub(filter) {
-  app.subscriptions = app.subscriptions.filter(f => f !== filter);
-  _renderSubsList();
-}
-
-function _renderSubsList() {
-  els.subsList.innerHTML = '';
-  for (const f of app.subscriptions) {
-    const chip = document.createElement('div');
-    chip.className = 'mqtt-sub-chip';
-    const label = document.createElement('span');
-    label.className = 'mqtt-sub-filter';
-    label.textContent = f;
-    const btn = document.createElement('button');
-    btn.className = 'mqtt-sub-remove';
-    btn.setAttribute('aria-label', 'Remove subscription ' + f);
-    btn.textContent = '×';
-    btn.addEventListener('click', () => _removeSub(f));
-    chip.appendChild(label);
-    chip.appendChild(btn);
-    els.subsList.appendChild(chip);
-  }
-}
-
-
 // ─── Tree Controls ────────────────────────────────────────────────────────────
 
 els.expandAll.addEventListener('click', () => {
@@ -408,10 +400,11 @@ els.collapseAll.addEventListener('click', () => {
   _renderTree();
 });
 els.clearBtn.addEventListener('click', () => {
+  _closeDetail();
   app.tree      = _makeNode();
   app.totalMsgs = 0;
   app.topicSet  = new Set();
-  els.tree.innerHTML       = '';
+  els.tree.innerHTML          = '';
   els.treePanel.style.display = 'none';
   _updateStats();
 });
@@ -425,8 +418,9 @@ function _setAllExpanded(node, val) {
 // ─── Message Handling ─────────────────────────────────────────────────────────
 
 function _handleMessage(topic, payload) {
-  const value  = _decodePayload(payload);
-  const isNew  = !app.topicSet.has(topic);
+  const { text, json } = _decodePayload(payload);
+  const isNew    = !app.topicSet.has(topic);
+  const wasJson  = node_wasJson(topic);
 
   app.totalMsgs++;
   app.topicSet.add(topic);
@@ -438,7 +432,9 @@ function _handleMessage(topic, payload) {
     if (!node.children.has(seg)) node.children.set(seg, _makeNode());
     node = node.children.get(seg);
   }
-  node.value       = value;
+  node.value       = text;
+  node.rawJson     = json;
+  node.topicPath   = topic;
   node.count       = (node.count || 0) + 1;
   node.lastUpdated = Date.now();
 
@@ -446,28 +442,60 @@ function _handleMessage(topic, payload) {
 
   if (els.treePanel.style.display === 'none') els.treePanel.style.display = '';
 
-  if (isNew) {
-    // New topic — rebuild entire tree (preserves expanded state)
+  const jsonStatusChanged = wasJson !== (json !== null);
+
+  if (isNew || jsonStatusChanged) {
+    // New topic or JSON status flipped — rebuild tree (preserves expanded state)
     _renderTree();
   } else if (node.dom.value) {
-    // Existing topic — update DOM in place and flash
-    node.dom.value.textContent = value;
-    if (node.dom.count) node.dom.count.textContent = '×' + node.count;
-    if (node.dom.age)   { node.dom.age.textContent = 'just now'; node.dom.age.dataset.ts = String(node.lastUpdated); }
+    // Existing topic — update in place and flash
+    node.dom.value.textContent = text;
+    if (node.dom.count)   node.dom.count.textContent = '×' + node.count;
+    if (node.dom.age)     { node.dom.age.textContent = 'just now'; node.dom.age.dataset.ts = String(node.lastUpdated); }
     _flashRow(node.dom.row);
   }
+
+  // Live-update the detail drawer if this topic is currently selected
+  if (app.detailTopic === topic) _updateDetailContent(node);
 }
 
+function node_wasJson(topic) {
+  const segments = topic.split('/');
+  let node = app.tree;
+  for (const seg of segments) {
+    if (!node.children.has(seg)) return false;
+    node = node.children.get(seg);
+  }
+  return node.rawJson !== null;
+}
+
+// Returns { text: string, json: object|array|null }
 function _decodePayload(bytes) {
-  if (bytes.length === 0) return '(empty)';
+  if (bytes.length === 0) return { text: '(empty)', json: null };
+
+  let str = null;
   try {
-    const str = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
-    if (!/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/.test(str)) {
-      return str.length > 300 ? str.slice(0, 300) + '…' : str;
-    }
-  } catch (_) { /* not valid UTF-8, fall through to hex */ }
+    const decoded = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    if (!/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/.test(decoded)) str = decoded;
+  } catch (_) { /* binary data */ }
+
+  if (str !== null) {
+    // Only treat objects and arrays as "JSON" — scalars display fine as plain text
+    try {
+      const parsed = JSON.parse(str);
+      if (parsed !== null && typeof parsed === 'object') {
+        const compact = JSON.stringify(parsed);
+        const text = compact.length > 80 ? compact.slice(0, 77) + '…' : compact;
+        return { text, json: parsed };
+      }
+    } catch (_) { /* not JSON */ }
+
+    return { text: str.length > 300 ? str.slice(0, 300) + '…' : str, json: null };
+  }
+
+  // Binary — hex fallback
   const hex = Array.from(bytes.slice(0, 48)).map(b => b.toString(16).padStart(2, '0')).join(' ');
-  return bytes.length > 48 ? hex + ' …' : hex;
+  return { text: bytes.length > 48 ? hex + ' …' : hex, json: null };
 }
 
 
@@ -525,6 +553,25 @@ function _renderNode(seg, node, container, depth) {
     node.dom.value = valEl;
     row.appendChild(valEl);
 
+    if (node.rawJson !== null) {
+      const jsonBtn = document.createElement('button');
+      jsonBtn.className = 'tree-json-btn' + (app.detailTopic === node.topicPath ? ' active' : '');
+      jsonBtn.textContent = '{ }';
+      jsonBtn.title = 'View full JSON';
+      jsonBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (app.detailTopic === node.topicPath) {
+          _closeDetail();
+        } else {
+          _openDetail(node);
+        }
+      });
+      node.dom.jsonBtn = jsonBtn;
+      row.appendChild(jsonBtn);
+    } else {
+      node.dom.jsonBtn = null;
+    }
+
     const ageEl = document.createElement('span');
     ageEl.className = 'tree-age';
     ageEl.textContent = _formatAge(Date.now() - node.lastUpdated);
@@ -538,9 +585,10 @@ function _renderNode(seg, node, container, depth) {
     node.dom.count = cntEl;
     row.appendChild(cntEl);
   } else {
-    node.dom.value = null;
-    node.dom.age   = null;
-    node.dom.count = null;
+    node.dom.value   = null;
+    node.dom.jsonBtn = null;
+    node.dom.age     = null;
+    node.dom.count   = null;
   }
 
   wrap.appendChild(row);
@@ -572,6 +620,74 @@ function _flashRow(rowEl) {
   rowEl.classList.remove('tree-row--flash');
   void rowEl.offsetWidth; // force reflow to restart the animation
   rowEl.classList.add('tree-row--flash');
+}
+
+
+// ─── Detail Drawer ────────────────────────────────────────────────────────────
+
+els.detailClose.addEventListener('click', _closeDetail);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') _closeDetail(); });
+
+function _openDetail(node) {
+  app.detailTopic = node.topicPath;
+  els.detailTopic.textContent = node.topicPath;
+  _updateDetailContent(node);
+  els.detail.classList.add('open');
+  els.detail.setAttribute('aria-hidden', 'false');
+  // Mark the badge active in the tree
+  document.querySelectorAll('.tree-json-btn.active').forEach(b => b.classList.remove('active'));
+  if (node.dom.jsonBtn) node.dom.jsonBtn.classList.add('active');
+}
+
+function _closeDetail() {
+  app.detailTopic = null;
+  els.detail.classList.remove('open');
+  els.detail.setAttribute('aria-hidden', 'true');
+  document.querySelectorAll('.tree-json-btn.active').forEach(b => b.classList.remove('active'));
+}
+
+function _updateDetailContent(node) {
+  els.detailBody.innerHTML = node.rawJson !== null
+    ? _renderJson(node.rawJson, 0)
+    : _escHtml(node.value ?? '');
+  const age = node.lastUpdated ? _formatAge(Date.now() - node.lastUpdated) : '';
+  els.detailMeta.textContent = `${node.count} message${node.count !== 1 ? 's' : ''} · updated ${age}`;
+  // Flash the header to signal a live update
+  els.detailHeader.classList.remove('mqtt-detail-header--flash');
+  void els.detailHeader.offsetWidth;
+  els.detailHeader.classList.add('mqtt-detail-header--flash');
+}
+
+// Recursive syntax-highlighted JSON renderer
+function _renderJson(val, depth) {
+  if (val === null)                  return '<span class="jn">null</span>';
+  if (val === true || val === false) return `<span class="jb">${val}</span>`;
+  if (typeof val === 'number')       return `<span class="jd">${val}</span>`;
+  if (typeof val === 'string')       return `<span class="js">"${_escHtml(val)}"</span>`;
+
+  const pad  = '  '.repeat(depth);
+  const pad1 = '  '.repeat(depth + 1);
+
+  if (Array.isArray(val)) {
+    if (val.length === 0) return '[]';
+    const items = val.map(v => pad1 + _renderJson(v, depth + 1));
+    return `[\n${items.join(',\n')}\n${pad}]`;
+  }
+
+  const keys = Object.keys(val);
+  if (keys.length === 0) return '{}';
+  const items = keys.map(k =>
+    `${pad1}<span class="jk">"${_escHtml(k)}"</span>: ${_renderJson(val[k], depth + 1)}`
+  );
+  return `{\n${items.join(',\n')}\n${pad}}`;
+}
+
+function _escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 

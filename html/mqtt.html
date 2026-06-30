@@ -38,19 +38,23 @@
           <div class="panel-label">// connection</div>
 
           <div class="mqtt-conn-row">
+            <div class="input-group mqtt-proto-group">
+              <label class="field-label" for="mqttProto">Protocol</label>
+              <select id="mqttProto" class="mono-input">
+                <option value="proxy">mqtt://</option>
+                <option value="wss">wss://</option>
+              </select>
+            </div>
             <div class="input-group mqtt-broker-group">
               <label class="field-label" for="mqttBroker">Broker</label>
-              <div class="input-prefix-wrap">
-                <span class="input-prefix">mqtt://</span>
-                <input
-                  type="text"
-                  id="mqttBroker"
-                  class="mono-input"
-                  placeholder="192.168.1.100 or broker.example.com"
-                  autocomplete="off"
-                  spellcheck="false"
-                />
-              </div>
+              <input
+                type="text"
+                id="mqttBroker"
+                class="mono-input"
+                placeholder="192.168.1.100 or broker.example.com"
+                autocomplete="off"
+                spellcheck="false"
+              />
             </div>
             <div class="input-group mqtt-port-group">
               <label class="field-label" for="mqttPort">Port</label>
@@ -61,6 +65,17 @@
                 placeholder="1883"
                 min="1"
                 max="65535"
+              />
+            </div>
+            <div class="input-group mqtt-path-group" id="mqttPathGroup" style="display:none">
+              <label class="field-label" for="mqttPath">WS Path</label>
+              <input
+                type="text"
+                id="mqttPath"
+                class="mono-input"
+                value="/mqtt"
+                autocomplete="off"
+                spellcheck="false"
               />
             </div>
           </div>
@@ -89,8 +104,11 @@
             </div>
           </div>
 
-          <div class="input-hint">
-            Connects to the broker over native MQTT (TCP port 1883 by default) via a local proxy. No WebSocket required on the broker.
+          <div class="input-hint" id="mqttHint">
+            Connects via local proxy over native MQTT TCP. No WebSocket required on the broker.
+          </div>
+          <div class="field-msg warning" id="mqttProxyWarning">
+            MQTT traffic will be proxied through this web server, not sent directly from your browser.
           </div>
 
           <div class="mqtt-conn-actions">
@@ -102,30 +120,6 @@
           </div>
 
           <div class="field-msg error" id="mqttError" style="display:none"></div>
-        </section>
-
-        <!-- Subscriptions Panel -->
-        <section class="panel" id="mqttSubPanel" style="display:none">
-          <div class="panel-label">// subscriptions</div>
-
-          <div class="mqtt-sub-row">
-            <input
-              type="text"
-              id="mqttTopicInput"
-              class="mono-input"
-              placeholder="#"
-              autocomplete="off"
-              spellcheck="false"
-            />
-            <button class="btn-secondary" id="mqttSubBtn">Subscribe</button>
-          </div>
-          <div class="input-hint">
-            <span class="hint-val-static">#</span> matches all topics ·
-            <span class="hint-val-static">sensors/#</span> matches all under a prefix ·
-            <span class="hint-val-static">home/+/temp</span> matches a single-level wildcard
-          </div>
-
-          <div class="mqtt-subs-list" id="mqttSubsList"></div>
         </section>
 
         <!-- Topic Browser Panel -->
@@ -145,6 +139,18 @@
         </section>
 
       </div>
+    </div>
+    <!-- JSON Payload Detail Drawer -->
+    <div class="mqtt-detail" id="mqttDetail" aria-hidden="true">
+      <div class="mqtt-detail-header" id="mqttDetailHeader">
+        <div class="mqtt-detail-heading">
+          <div class="mqtt-detail-label">// payload</div>
+          <div class="mqtt-detail-topic" id="mqttDetailTopic"></div>
+        </div>
+        <button class="mqtt-detail-close" id="mqttDetailClose" aria-label="Close detail panel">×</button>
+      </div>
+      <div class="mqtt-detail-meta" id="mqttDetailMeta"></div>
+      <pre class="mqtt-detail-body" id="mqttDetailBody"></pre>
     </div>
   </main>
 
