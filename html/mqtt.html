@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <title>NetTools — MQTT Client</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <div id="sidebar-mount"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+        <div class="breadcrumb">
+          <span class="bc-root">// network</span>
+          <span class="bc-sep">/</span>
+          <span class="bc-current">mqtt-client</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="tool-view tool-view--wide" id="tool-mqtt">
+      <div class="tool-header">
+        <h1 class="tool-title">MQTT Client</h1>
+        <p class="tool-desc">Connect to an MQTT broker over WebSocket and browse published topics in real time. All processing runs in your browser — no data leaves your device.</p>
+      </div>
+
+      <div class="tool-body">
+
+        <!-- Connection Panel -->
+        <section class="panel">
+          <div class="panel-label">// connection</div>
+
+          <div class="mqtt-conn-row">
+            <div class="input-group mqtt-broker-group">
+              <label class="field-label" for="mqttBroker">Broker</label>
+              <input
+                type="text"
+                id="mqttBroker"
+                class="mono-input"
+                placeholder="192.168.1.100 or broker.example.com"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <div class="input-group mqtt-port-group">
+              <label class="field-label" for="mqttPort">Port</label>
+              <input
+                type="number"
+                id="mqttPort"
+                class="mono-input"
+                placeholder="1883"
+                min="1"
+                max="65535"
+              />
+            </div>
+            <div class="input-group mqtt-path-group">
+              <label class="field-label" for="mqttPath">WS Path</label>
+              <input
+                type="text"
+                id="mqttPath"
+                class="mono-input"
+                value="/mqtt"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <div class="input-group mqtt-proto-group">
+              <label class="field-label" for="mqttProto">Protocol</label>
+              <select id="mqttProto" class="mono-input">
+                <option value="ws">ws://</option>
+                <option value="wss">wss://</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-hint">
+            Broker must have WebSocket support enabled.
+            Common WebSocket ports: <span class="hint-val-static">8083</span>, <span class="hint-val-static">9001</span>, <span class="hint-val-static">8000</span>.
+            Path is <span class="hint-val-static">/mqtt</span> for Mosquitto, <span class="hint-val-static">/</span> for some others.
+          </div>
+
+          <div class="mqtt-conn-actions">
+            <button class="btn-primary" id="mqttConnectBtn">Connect</button>
+            <div class="mqtt-status">
+              <span class="mqtt-status-dot" id="mqttStatusDot"></span>
+              <span class="mqtt-status-text" id="mqttStatusText">disconnected</span>
+            </div>
+          </div>
+
+          <div class="field-msg error" id="mqttError" style="display:none"></div>
+        </section>
+
+        <!-- Subscriptions Panel -->
+        <section class="panel" id="mqttSubPanel" style="display:none">
+          <div class="panel-label">// subscriptions</div>
+
+          <div class="mqtt-sub-row">
+            <input
+              type="text"
+              id="mqttTopicInput"
+              class="mono-input"
+              placeholder="#"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button class="btn-secondary" id="mqttSubBtn">Subscribe</button>
+          </div>
+          <div class="input-hint">
+            <span class="hint-val-static">#</span> matches all topics ·
+            <span class="hint-val-static">sensors/#</span> matches all under a prefix ·
+            <span class="hint-val-static">home/+/temp</span> matches a single-level wildcard
+          </div>
+
+          <div class="mqtt-subs-list" id="mqttSubsList"></div>
+        </section>
+
+        <!-- Topic Browser Panel -->
+        <section class="panel" id="mqttTreePanel" style="display:none">
+          <div class="panel-label">// topic browser</div>
+
+          <div class="mqtt-tree-toolbar">
+            <span class="mqtt-stats" id="mqttStats">0 messages · 0 topics</span>
+            <div class="mqtt-tree-actions">
+              <button class="btn-secondary" id="mqttExpandAllBtn">expand all</button>
+              <button class="btn-secondary" id="mqttCollapseAllBtn">collapse all</button>
+              <button class="btn-secondary" id="mqttClearBtn">clear</button>
+            </div>
+          </div>
+
+          <div class="mqtt-tree" id="mqttTree" aria-live="polite"></div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="js/sidebar.js"></script>
+  <script src="js/mqtt-client.js"></script>
+</body>
+</html>

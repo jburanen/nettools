@@ -19,6 +19,10 @@
       <span class="nav-icon">⬡</span>
       <span class="nav-label">Subnet Calculator</span>
     </a>
+    <a href="mqtt.html" class="nav-item" data-tool="mqtt">
+      <span class="nav-icon">⬡</span>
+      <span class="nav-label">MQTT Client</span>
+    </a>
 
     <div class="nav-section-label">// utilities</div>
     <a href="compose-converter.html" class="nav-item" data-tool="compose-converter">
@@ -76,7 +80,7 @@
 
   // Mark the active nav item based on the current page filename
   const page = window.location.pathname.split('/').pop() || 'index.html';
-  const toolMap = { 'subnet.html': 'subnet', 'tcpdump.html': 'tcpdump', 'fw-monitor.html': 'fw-monitor', 'compose-converter.html': 'compose-converter' };
+  const toolMap = { 'subnet.html': 'subnet', 'tcpdump.html': 'tcpdump', 'fw-monitor.html': 'fw-monitor', 'compose-converter.html': 'compose-converter', 'mqtt.html': 'mqtt' };
   const activeTool = toolMap[page];
   if (activeTool) {
     const link = document.querySelector(`.nav-item[data-tool="${activeTool}"]`);

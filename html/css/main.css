@@ -865,3 +865,215 @@ select.mono-input option { background: var(--bg-raised); }
 
 /* --- Selection -------------------------------------------- */
 ::selection { background: var(--cyan-glow); color: var(--cyan); }
+
+/* --- MQTT Client ------------------------------------------ */
+
+.tool-view--wide { max-width: 1200px; }
+
+/* Connection row */
+.mqtt-conn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.mqtt-broker-group { flex: 2 1 220px; margin-bottom: 0; }
+.mqtt-port-group   { flex: 0 0 90px;  margin-bottom: 0; }
+.mqtt-path-group   { flex: 0 0 100px; margin-bottom: 0; }
+.mqtt-proto-group  { flex: 0 0 100px; margin-bottom: 0; }
+
+.mqtt-conn-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.mqtt-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+
+.mqtt-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.mqtt-status-dot.dot--connected  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.mqtt-status-dot.dot--connecting { background: var(--amber); box-shadow: 0 0 6px var(--amber); animation: mqtt-pulse 1s ease-in-out infinite; }
+.mqtt-status-dot.dot--error      { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+
+@keyframes mqtt-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+.mqtt-status-text { color: var(--text-secondary); }
+
+/* Subscriptions */
+.mqtt-sub-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.mqtt-sub-row .mono-input { flex: 1; }
+
+.mqtt-subs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  min-height: 0;
+}
+
+.mqtt-sub-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-bright);
+  border-radius: 3px;
+  padding: 4px 8px 4px 10px;
+}
+
+.mqtt-sub-filter {
+  font-size: 0.82rem;
+  color: var(--cyan);
+}
+
+.mqtt-sub-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 2px;
+  cursor: pointer;
+  transition: color 0.15s;
+  font-family: var(--font);
+}
+.mqtt-sub-remove:hover { color: var(--red); }
+
+/* Tree toolbar */
+.mqtt-tree-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mqtt-stats {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.mqtt-tree-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Tree view */
+.mqtt-tree {
+  overflow-x: auto;
+}
+
+.tree-node { /* structural container only */ }
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-right: 12px;
+  border-radius: var(--radius);
+  transition: background 0.12s;
+  white-space: nowrap;
+}
+.tree-row:hover { background: var(--bg-hover); }
+
+/* Flash animation on value update */
+@keyframes tree-flash {
+  0%   { background: rgba(230, 168, 23, 0.28); }
+  100% { background: transparent; }
+}
+.tree-row--flash { animation: tree-flash 1.4s ease-out; }
+
+.tree-toggle {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+.tree-toggle:hover { color: var(--cyan); }
+
+.tree-spacer {
+  flex-shrink: 0;
+  width: 18px;
+  height: 1px;
+  display: inline-block;
+}
+
+.tree-segment {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  flex-shrink: 0;
+}
+.tree-segment--branch {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.tree-value {
+  margin-left: 12px;
+  color: var(--cyan);
+  font-size: 0.88rem;
+  max-width: 480px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-age {
+  margin-left: 10px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  min-width: 62px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.tree-count {
+  margin-left: 6px;
+  color: var(--border-bright);
+  font-size: 0.68rem;
+  flex-shrink: 0;
+}
+
+.tree-children { /* children are indented via padding-left on .tree-row */ }
+
+@media (max-width: 720px) {
+  .mqtt-conn-row   { flex-direction: column; }
+  .mqtt-port-group,
+  .mqtt-path-group,
+  .mqtt-proto-group { flex: 1 1 100%; }
+  .tree-value { max-width: 180px; }
+}
