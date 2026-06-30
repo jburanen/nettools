@@ -19,15 +19,14 @@
       <span class="nav-icon">⬡</span>
       <span class="nav-label">Subnet Calculator</span>
     </a>
-    <a href="mqtt.html" class="nav-item" data-tool="mqtt">
-      <span class="nav-icon">⬡</span>
-      <span class="nav-label">MQTT Client</span>
-    </a>
-
     <div class="nav-section-label">// utilities</div>
     <a href="compose-converter.html" class="nav-item" data-tool="compose-converter">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">Compose Converter</span>
+    </a>
+    <a href="mqtt.html" class="nav-item" data-tool="mqtt">
+      <span class="nav-icon">⬡</span>
+      <span class="nav-label">MQTT Client</span>
     </a>
 
     <div class="nav-section-label">// command builders</div>
