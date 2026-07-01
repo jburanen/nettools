@@ -657,9 +657,9 @@ details.collapsible-section > summary {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  font-size: 0.65rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.04em;
   padding-bottom: 7px;
   border-bottom: 1px solid var(--border);
   user-select: none;

@@ -93,33 +93,35 @@
           </details>
 
           <!-- Stop / Filter -->
-          <div style="margin-top:16px">
-            <div class="filter-section-label" style="margin-bottom:8px">STOP / FILTER</div>
-            <div class="input-group">
-              <label class="field-label" for="optStopString">Stop on string (-s)</label>
-              <input
-                type="text"
-                id="optStopString"
-                class="mono-input"
-                placeholder="e.g. conn_failed"
-                autocomplete="off"
-                spellcheck="false"
-              />
-              <div class="input-hint">Debug halts when this string appears in output — run <code style="color:var(--cyan)">fw ctl debug 0</code> afterward to reset flags and avoid performance impact</div>
+          <details class="collapsible-section">
+            <summary>STOP / FILTER</summary>
+            <div class="collapsible-body">
+              <div class="input-group">
+                <label class="field-label" for="optStopString">Stop on string (-s)</label>
+                <input
+                  type="text"
+                  id="optStopString"
+                  class="mono-input"
+                  placeholder="e.g. conn_failed"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <div class="input-hint">Debug halts when this string appears in output — run <code style="color:var(--cyan)">fw ctl debug 0</code> afterward to reset flags and avoid performance impact</div>
+              </div>
+              <div class="input-group" style="margin-top:10px">
+                <label class="field-label" for="optDebugFilter">Debug string filter (-d)</label>
+                <input
+                  type="text"
+                  id="optDebugFilter"
+                  class="mono-input"
+                  placeholder="str1,str2,^exclude1,^exclude2"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <div class="input-hint">Comma-separated — plain terms are included, <code style="color:var(--cyan)">^</code>-prefixed terms are excluded · e.g. <code style="color:var(--cyan)">error,conn,^RST</code> shows messages with "error" or "conn" but not "RST" · more efficient than post-processing with grep</div>
+              </div>
             </div>
-            <div class="input-group" style="margin-top:10px">
-              <label class="field-label" for="optDebugFilter">Debug string filter (-d)</label>
-              <input
-                type="text"
-                id="optDebugFilter"
-                class="mono-input"
-                placeholder="str1,str2,^exclude1,^exclude2"
-                autocomplete="off"
-                spellcheck="false"
-              />
-              <div class="input-hint">Comma-separated — plain terms are included, <code style="color:var(--cyan)">^</code>-prefixed terms are excluded · e.g. <code style="color:var(--cyan)">error,conn,^RST</code> shows messages with "error" or "conn" but not "RST" · more efficient than post-processing with grep</div>
-            </div>
-          </div>
+          </details>
 
           <!-- Advanced flags -->
           <details class="collapsible-section">
@@ -177,22 +179,25 @@
             </div>
           </details>
 
-          <div class="input-group" style="margin-top:16px">
-            <label class="field-label" for="optOutputFile">Capture to file (tee)</label>
-            <input
-              type="text"
-              id="optOutputFile"
-              class="mono-input"
-              placeholder="omit to print to stdout only"
-              autocomplete="off"
-              spellcheck="false"
-            />
-            <div class="input-hint">
-              Uses <code style="color:var(--cyan)">tee</code> — output appears on screen and is saved simultaneously ·
-              <span class="hint-val" id="fillDefaultPath">use default path</span>
-              · <span class="hint-val" id="clearOutput">clear</span>
+          <!-- Capture to file -->
+          <details class="collapsible-section">
+            <summary>Capture to file (tee)</summary>
+            <div class="collapsible-body">
+              <input
+                type="text"
+                id="optOutputFile"
+                class="mono-input"
+                placeholder="omit to print to stdout only"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <div class="input-hint">
+                Uses <code style="color:var(--cyan)">tee</code> — output appears on screen and is saved simultaneously ·
+                <span class="hint-val" id="fillDefaultPath">use default path</span>
+                · <span class="hint-val" id="clearOutput">clear</span>
+              </div>
             </div>
-          </div>
+          </details>
         </section>
 
         <!-- Grep Filters -->
