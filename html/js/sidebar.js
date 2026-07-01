@@ -48,11 +48,21 @@
       <span class="nav-label">fw ctl zdebug</span>
       <span class="nav-badge">2 weeks</span>
     </div>
+    <div class="nav-item disabled" title="Coming soon">
+      <span class="nav-icon">⬡</span>
+      <span class="nav-label">routemap</span>
+      <span class="nav-badge">2 weeks</span>
+    </div>
 
     <div class="nav-section-label">// workflows</div>
     <div class="nav-item disabled" title="Coming soon">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">Troubleshooting Coach</span>
+      <span class="nav-badge">2 weeks</span>
+    </div>
+    <div class="nav-item disabled" title="Coming soon">
+      <span class="nav-icon">⬡</span>
+      <span class="nav-label">Route-based VPN Configurator</span>
       <span class="nav-badge">2 weeks</span>
     </div>
   </nav>
