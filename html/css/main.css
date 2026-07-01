@@ -678,6 +678,95 @@ details.collapsible-section > .collapsible-body {
   padding-top: 10px;
 }
 
+/* ── Input clear buttons ──────────────────────────────────── */
+.input-wrap {
+  position: relative;
+}
+.input-wrap .mono-input {
+  padding-right: 28px;
+}
+.input-wrap .input-clear-btn {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 2px 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s, color 0.12s;
+}
+.input-wrap.has-value .input-clear-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+.input-wrap .input-clear-btn:hover { color: var(--cyan); }
+
+.proto-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.proto-row .filter-proto { flex: 1; min-width: 0; }
+.proto-clear-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 2px 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s, color 0.12s;
+}
+.proto-clear-btn.active { opacity: 1; pointer-events: auto; }
+.proto-clear-btn:hover { color: var(--cyan); }
+.filter-reset-btn {
+  background: none;
+  border: none;
+  color: var(--cyan-dim);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: inherit;
+  padding: 0;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+.filter-reset-btn:hover { color: var(--cyan); }
+
+.field-label-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+.field-label-row .field-label { margin-bottom: 0; }
+.not-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.6rem;
+  font-family: inherit;
+  letter-spacing: 0.08em;
+  padding: 1px 5px;
+  border-radius: 3px;
+  line-height: 1.4;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.not-toggle:hover { border-color: var(--cyan-dim); color: var(--text-primary); }
+.not-toggle.active {
+  background: var(--cyan-glow);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
 /* Per-field validation messages */
 .field-msg {
   font-size: 0.68rem;

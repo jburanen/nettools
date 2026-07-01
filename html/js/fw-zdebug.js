@@ -43,8 +43,10 @@ const dstHostInput = $('dstHost');
 const dstPortInput = $('dstPort');
 const hostInput    = $('host');
 const portInput    = $('port');
-const dropReason   = $('dropReason');
-const ifaceInput   = $('iface');
+const dropReason      = $('dropReason');
+const dropReasonNot   = $('dropReasonNot');
+const ifaceInput      = $('iface');
+const ifaceNot        = $('ifaceNot');
 
 const cmdText      = $('cmdText');
 const cmdOutput    = document.querySelector('.cmd-output');
@@ -300,18 +302,19 @@ function buildCommand() {
     stages.push({ flag: '-E', pattern: `sport=${portR.value}|dport=${portR.value}` });
   }
 
-  // Drop reason — case-insensitive substring match
+  // Drop reason — case-insensitive; -v inverts when NOT active
   const reason = (dropReason.value || '').trim();
   if (reason) {
-    // Escape single quotes for shell safety
     const safeReason = reason.replace(/'/g, "'\\''");
-    stages.push({ flag: '-i', pattern: safeReason });
+    const notActive = dropReasonNot.classList.contains('active');
+    stages.push({ flag: notActive ? '-iv' : '-i', pattern: safeReason });
   }
 
-  // Interface — match the interface name in zdebug output
+  // Interface — -v inverts when NOT active
   const iface = (ifaceInput.value || '').trim();
   if (iface) {
-    stages.push({ flag: '', pattern: iface });
+    const notActive = ifaceNot.classList.contains('active');
+    stages.push({ flag: notActive ? '-v' : '', pattern: iface });
   }
 
   // Assemble full pipeline
@@ -406,6 +409,69 @@ $('clearOutput').addEventListener('click', () => {
   optOutputFile.value = '';
   updateCommand();
   optOutputFile.focus();
+});
+
+// ── Grep filter clear buttons ─────────────────────────────────
+
+const clearableInputs = [
+  srcHostInput, srcPortInput,
+  dstHostInput, dstPortInput,
+  hostInput, portInput,
+  dropReason, ifaceInput,
+];
+
+function syncClearBtn(input) {
+  input.closest('.input-wrap')?.classList.toggle('has-value', input.value !== '');
+}
+
+// Show/hide × on value change
+clearableInputs.forEach(el => {
+  el.addEventListener('input', () => syncClearBtn(el));
+});
+
+// Handle × click via event delegation on the grep filters section
+document.querySelectorAll('.input-clear-btn[data-clear]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const el = $(btn.dataset.clear);
+    if (!el) return;
+    el.value = '';
+    syncClearBtn(el);
+    updateCommand();
+    el.focus();
+  });
+});
+
+// Protocol clear
+const clearProtoBtn = $('clearProto');
+protoSelect.addEventListener('change', () => {
+  clearProtoBtn.classList.toggle('active', protoSelect.value !== '');
+});
+clearProtoBtn.addEventListener('click', () => {
+  protoSelect.value = '';
+  clearProtoBtn.classList.remove('active');
+  updateCommand();
+  protoSelect.focus();
+});
+
+// NOT toggles
+[dropReasonNot, ifaceNot].forEach(btn => {
+  btn.addEventListener('click', () => {
+    const active = btn.classList.toggle('active');
+    btn.setAttribute('aria-pressed', String(active));
+    updateCommand();
+  });
+});
+
+// Reset all grep filters
+$('resetAllFilters').addEventListener('click', () => {
+  clearableInputs.forEach(el => { el.value = ''; syncClearBtn(el); });
+  protoSelect.value = '';
+  clearProtoBtn.classList.remove('active');
+  [dropReasonNot, ifaceNot].forEach(btn => {
+    btn.classList.remove('active');
+    btn.setAttribute('aria-pressed', 'false');
+  });
+  updateCommand();
 });
 
 // ── Initial render (no auto-copy on page load) ────────────────
