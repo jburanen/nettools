@@ -205,7 +205,10 @@
           <div class="input-hint">Each filter adds a <code style="color:var(--cyan)">grep</code> stage to the pipeline. All active filters must match (AND logic). Fields left empty are skipped. Because zdebug is free-form kernel text, IP filters match the address anywhere in the line — combine source and destination filters for precise flow matching.</div>
 
           <div class="input-group" style="margin-top:14px">
-            <label class="field-label" for="proto">Protocol</label>
+            <div class="field-label-row">
+              <label class="field-label" for="proto">Protocol</label>
+              <button type="button" class="not-toggle" id="protoNot" aria-pressed="false">NOT</button>
+            </div>
             <div class="proto-row">
               <select id="proto" class="mono-input filter-proto">
                 <option value="">any</option>
@@ -224,7 +227,10 @@
             <div class="filter-section">
               <div class="filter-section-label">SOURCE</div>
               <div class="input-group">
-                <label class="field-label" for="srcHost">Host / IP</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="srcHost">Host / IP</label>
+                  <button type="button" class="not-toggle" id="srcHostNot" aria-pressed="false">NOT</button>
+                </div>
                 <div class="input-wrap">
                   <input
                     type="text"
@@ -239,7 +245,10 @@
                 <div class="field-msg" id="srcHostMsg"></div>
               </div>
               <div class="input-group">
-                <label class="field-label" for="srcPort">Source Port (sport)</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="srcPort">Source Port (sport)</label>
+                  <button type="button" class="not-toggle" id="srcPortNot" aria-pressed="false">NOT</button>
+                </div>
                 <div class="input-wrap">
                   <input
                     type="text"
@@ -258,7 +267,10 @@
             <div class="filter-section">
               <div class="filter-section-label">DESTINATION</div>
               <div class="input-group">
-                <label class="field-label" for="dstHost">Host / IP</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="dstHost">Host / IP</label>
+                  <button type="button" class="not-toggle" id="dstHostNot" aria-pressed="false">NOT</button>
+                </div>
                 <div class="input-wrap">
                   <input
                     type="text"
@@ -273,7 +285,10 @@
                 <div class="field-msg" id="dstHostMsg"></div>
               </div>
               <div class="input-group">
-                <label class="field-label" for="dstPort">Destination Port (dport)</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="dstPort">Destination Port (dport)</label>
+                  <button type="button" class="not-toggle" id="dstPortNot" aria-pressed="false">NOT</button>
+                </div>
                 <div class="input-wrap">
                   <input
                     type="text"
@@ -292,7 +307,10 @@
             <div class="filter-section">
               <div class="filter-section-label">EITHER DIRECTION</div>
               <div class="input-group">
-                <label class="field-label" for="host">Host / IP</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="host">Host / IP</label>
+                  <button type="button" class="not-toggle" id="hostNot" aria-pressed="false">NOT</button>
+                </div>
                 <div class="input-wrap">
                   <input
                     type="text"
@@ -307,7 +325,10 @@
                 <div class="field-msg" id="hostMsg"></div>
               </div>
               <div class="input-group">
-                <label class="field-label" for="port">Port</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="port">Port</label>
+                  <button type="button" class="not-toggle" id="portNot" aria-pressed="false">NOT</button>
+                </div>
                 <div class="input-wrap">
                   <input
                     type="text"

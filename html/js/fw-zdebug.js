@@ -48,6 +48,15 @@ const dropReasonNot   = $('dropReasonNot');
 const ifaceInput      = $('iface');
 const ifaceNot        = $('ifaceNot');
 
+// NOT toggle buttons for all grep filters
+const protoNot   = $('protoNot');
+const srcHostNot = $('srcHostNot');
+const srcPortNot = $('srcPortNot');
+const dstHostNot = $('dstHostNot');
+const dstPortNot = $('dstPortNot');
+const hostNot    = $('hostNot');
+const portNot    = $('portNot');
+
 const cmdText      = $('cmdText');
 const cmdOutput    = document.querySelector('.cmd-output');
 const copyBtn      = $('copyBtn');
@@ -138,6 +147,13 @@ function parseVsIds(raw) {
 
 function shellSingleQuote(s) {
   return `'${s.replace(/'/g, "'\\''")}'`;
+}
+
+// Appends 'v' to a grep flag when the NOT toggle is active.
+// '' → '-v', '-E' → '-Ev', '-i' → '-iv'
+function withNot(flag, notEl) {
+  if (!notEl.classList.contains('active')) return flag;
+  return flag ? flag + 'v' : '-v';
 }
 
 // ── IP → grep pattern conversion ─────────────────────────────
@@ -266,55 +282,53 @@ function buildCommand() {
   // Protocol — zdebug R80+ outputs "proto=N"
   const proto = protoSelect.value;
   if (proto) {
-    stages.push({ flag: '', pattern: `proto=${proto}` });
+    stages.push({ flag: withNot('', protoNot), pattern: `proto=${proto}` });
   }
 
   // Source host
   const srcInfo = hostToGrepInfo(srcHostR);
   if (srcInfo) {
-    stages.push({ flag: srcInfo.extended ? '-E' : '', pattern: srcInfo.pattern });
+    stages.push({ flag: withNot(srcInfo.extended ? '-E' : '', srcHostNot), pattern: srcInfo.pattern });
   }
 
   // Source port — zdebug outputs "sport=N"
   if (srcPortR.valid && srcPortR.value) {
-    stages.push({ flag: '', pattern: `sport=${srcPortR.value}` });
+    stages.push({ flag: withNot('', srcPortNot), pattern: `sport=${srcPortR.value}` });
   }
 
   // Destination host
   const dstInfo = hostToGrepInfo(dstHostR);
   if (dstInfo) {
-    stages.push({ flag: dstInfo.extended ? '-E' : '', pattern: dstInfo.pattern });
+    stages.push({ flag: withNot(dstInfo.extended ? '-E' : '', dstHostNot), pattern: dstInfo.pattern });
   }
 
   // Destination port — zdebug outputs "dport=N"
   if (dstPortR.valid && dstPortR.value) {
-    stages.push({ flag: '', pattern: `dport=${dstPortR.value}` });
+    stages.push({ flag: withNot('', dstPortNot), pattern: `dport=${dstPortR.value}` });
   }
 
-  // Either-direction host — same grep as directional; combining src+dst gives AND logic
+  // Either-direction host
   const eitherInfo = hostToGrepInfo(hostR);
   if (eitherInfo) {
-    stages.push({ flag: eitherInfo.extended ? '-E' : '', pattern: eitherInfo.pattern });
+    stages.push({ flag: withNot(eitherInfo.extended ? '-E' : '', hostNot), pattern: eitherInfo.pattern });
   }
 
   // Either-direction port — match sport or dport with alternation
   if (portR.valid && portR.value) {
-    stages.push({ flag: '-E', pattern: `sport=${portR.value}|dport=${portR.value}` });
+    stages.push({ flag: withNot('-E', portNot), pattern: `sport=${portR.value}|dport=${portR.value}` });
   }
 
-  // Drop reason — case-insensitive; -v inverts when NOT active
+  // Drop reason — case-insensitive
   const reason = (dropReason.value || '').trim();
   if (reason) {
     const safeReason = reason.replace(/'/g, "'\\''");
-    const notActive = dropReasonNot.classList.contains('active');
-    stages.push({ flag: notActive ? '-iv' : '-i', pattern: safeReason });
+    stages.push({ flag: withNot('-i', dropReasonNot), pattern: safeReason });
   }
 
-  // Interface — -v inverts when NOT active
+  // Interface
   const iface = (ifaceInput.value || '').trim();
   if (iface) {
-    const notActive = ifaceNot.classList.contains('active');
-    stages.push({ flag: notActive ? '-v' : '', pattern: iface });
+    stages.push({ flag: withNot('', ifaceNot), pattern: iface });
   }
 
   // Assemble full pipeline
@@ -453,8 +467,15 @@ clearProtoBtn.addEventListener('click', () => {
   protoSelect.focus();
 });
 
-// NOT toggles
-[dropReasonNot, ifaceNot].forEach(btn => {
+// NOT toggles — all grep filters
+const allNotToggles = [
+  protoNot,
+  srcHostNot, srcPortNot,
+  dstHostNot, dstPortNot,
+  hostNot, portNot,
+  dropReasonNot, ifaceNot,
+];
+allNotToggles.forEach(btn => {
   btn.addEventListener('click', () => {
     const active = btn.classList.toggle('active');
     btn.setAttribute('aria-pressed', String(active));
@@ -467,7 +488,7 @@ $('resetAllFilters').addEventListener('click', () => {
   clearableInputs.forEach(el => { el.value = ''; syncClearBtn(el); });
   protoSelect.value = '';
   clearProtoBtn.classList.remove('active');
-  [dropReasonNot, ifaceNot].forEach(btn => {
+  allNotToggles.forEach(btn => {
     btn.classList.remove('active');
     btn.setAttribute('aria-pressed', 'false');
   });

@@ -752,12 +752,12 @@ details.collapsible-section > .collapsible-body {
   border: 1px solid var(--border);
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: 0.6rem;
+  font-size: 0.72rem;
   font-family: inherit;
-  letter-spacing: 0.08em;
-  padding: 1px 5px;
+  letter-spacing: 0.1em;
+  padding: 0px 7px;
   border-radius: 3px;
-  line-height: 1.4;
+  line-height: 1.35;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 .not-toggle:hover { border-color: var(--cyan-dim); color: var(--text-primary); }
