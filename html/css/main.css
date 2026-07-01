@@ -647,6 +647,37 @@ select.mono-input option { background: var(--bg-raised); }
   border-bottom: 1px solid var(--border);
 }
 
+/* Collapsible subsections (details/summary) */
+details.collapsible-section {
+  margin-top: 16px;
+}
+details.collapsible-section > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+details.collapsible-section > summary::-webkit-details-marker { display: none; }
+details.collapsible-section > summary::before {
+  content: '▶';
+  font-size: 0.5rem;
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+details.collapsible-section[open] > summary::before {
+  transform: rotate(90deg);
+}
+details.collapsible-section > .collapsible-body {
+  padding-top: 10px;
+}
+
 /* Per-field validation messages */
 .field-msg {
   font-size: 0.68rem;

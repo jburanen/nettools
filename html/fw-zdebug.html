@@ -53,42 +53,44 @@
 
           <div class="option-toggles">
             <label class="toggle-row">
-              <input type="checkbox" id="optExtended" class="toggle-check" />
+              <input type="checkbox" id="optExtended" class="toggle-check" checked/>
               <span class="toggle-label">
                 <span class="toggle-flag">+</span>
-                Extended output — shows drop context: kernel function, blade, rule number
+                Include PPAK drops
               </span>
             </label>
           </div>
 
           <!-- VSX -->
-          <div style="margin-top:16px">
-            <div class="filter-section-label" style="margin-bottom:8px">VSX</div>
-            <div class="tcpdump-row">
-              <div class="input-group">
-                <label class="field-label" for="vsxIds">Virtual Systems (-v)</label>
-                <input
-                  type="text"
-                  id="vsxIds"
-                  class="mono-input"
-                  placeholder="e.g. 1,2,5"
-                  autocomplete="off"
-                  spellcheck="false"
-                />
-                <div class="field-msg" id="vsxIdsMsg"></div>
-                <div class="input-hint">Comma-separated VS IDs — limits debug to specified virtual systems</div>
-              </div>
-              <div class="input-group" style="display:flex;align-items:flex-end;padding-bottom:4px">
-                <label class="toggle-row">
-                  <input type="checkbox" id="vsxKernel" class="toggle-check" />
-                  <span class="toggle-label">
-                    <span class="toggle-flag">-k</span>
-                    Include kernel / SecureXL entities not bound to a specific VS
-                  </span>
-                </label>
+          <details class="collapsible-section">
+            <summary>VSX</summary>
+            <div class="collapsible-body">
+              <div class="tcpdump-row">
+                <div class="input-group">
+                  <label class="field-label" for="vsxIds">Virtual Systems (-v)</label>
+                  <input
+                    type="text"
+                    id="vsxIds"
+                    class="mono-input"
+                    placeholder="e.g. 1,2,5"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <div class="field-msg" id="vsxIdsMsg"></div>
+                  <div class="input-hint">Comma-separated VS IDs — limits debug to specified virtual systems</div>
+                </div>
+                <div class="input-group" style="display:flex;align-items:flex-end;padding-bottom:4px">
+                  <label class="toggle-row">
+                    <input type="checkbox" id="vsxKernel" class="toggle-check" />
+                    <span class="toggle-label">
+                      <span class="toggle-flag">-k</span>
+                      Include kernel / SecureXL entities not bound to a specific VS
+                    </span>
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
+          </details>
 
           <!-- Stop / Filter -->
           <div style="margin-top:16px">
@@ -120,58 +122,60 @@
           </div>
 
           <!-- Advanced flags -->
-          <div style="margin-top:16px">
-            <div class="filter-section-label" style="margin-bottom:8px">ADVANCED FLAGS</div>
-            <div class="tcpdump-row">
-              <div class="input-group">
-                <label class="field-label" for="optFrequency">Frequency threshold (-f)</label>
-                <select id="optFrequency" class="mono-input">
-                  <option value="">default — show all</option>
-                  <option value="RARE">RARE — rare messages only</option>
-                  <option value="COMMON">COMMON — common and below</option>
-                </select>
-                <div class="input-hint">Distinct frequencies only in the 'VPN' module — no effect on other modules</div>
+          <details class="collapsible-section">
+            <summary>ADVANCED FLAGS</summary>
+            <div class="collapsible-body">
+              <div class="tcpdump-row">
+                <div class="input-group">
+                  <label class="field-label" for="optFrequency">Frequency threshold (-f)</label>
+                  <select id="optFrequency" class="mono-input">
+                    <option value="">default — show all</option>
+                    <option value="RARE">RARE — rare messages only</option>
+                    <option value="COMMON">COMMON — common and below</option>
+                  </select>
+                  <div class="input-hint">Distinct frequencies only in the 'VPN' module — no effect on other modules</div>
+                </div>
+                <div class="input-group">
+                  <label class="field-label" for="optInspectFilter">INSPECT filter (-e)</label>
+                  <input
+                    type="text"
+                    id="optInspectFilter"
+                    class="mono-input"
+                    placeholder='e.g. accept tcp, first;'
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <div class="input-hint">FireWall-only — does not filter SecureXL debug (use -F for that)</div>
+                </div>
               </div>
-              <div class="input-group">
-                <label class="field-label" for="optInspectFilter">INSPECT filter (-e)</label>
-                <input
-                  type="text"
-                  id="optInspectFilter"
-                  class="mono-input"
-                  placeholder='e.g. accept tcp, first;'
-                  autocomplete="off"
-                  spellcheck="false"
-                />
-                <div class="input-hint">FireWall-only — does not filter SecureXL debug (use -F for that)</div>
+              <div class="tcpdump-row" style="margin-top:10px">
+                <div class="input-group">
+                  <label class="field-label" for="optKernelFilter">Kernel debug filter (-F)</label>
+                  <input
+                    type="text"
+                    id="optKernelFilter"
+                    class="mono-input"
+                    placeholder="see Security Gateway Guide"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <div class="input-hint">Also filters SecureXL debug · see Security Gateway Guide › Kernel Debug Filters</div>
+                </div>
+                <div class="input-group">
+                  <label class="field-label" for="optHFilter">Debug filter (-H)</label>
+                  <input
+                    type="text"
+                    id="optHFilter"
+                    class="mono-input"
+                    placeholder="see Security Gateway Guide"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <div class="input-hint">See Security Gateway Guide › Kernel Debug Filters</div>
+                </div>
               </div>
             </div>
-            <div class="tcpdump-row" style="margin-top:10px">
-              <div class="input-group">
-                <label class="field-label" for="optKernelFilter">Kernel debug filter (-F)</label>
-                <input
-                  type="text"
-                  id="optKernelFilter"
-                  class="mono-input"
-                  placeholder="see Security Gateway Guide"
-                  autocomplete="off"
-                  spellcheck="false"
-                />
-                <div class="input-hint">Also filters SecureXL debug · see Security Gateway Guide › Kernel Debug Filters</div>
-              </div>
-              <div class="input-group">
-                <label class="field-label" for="optHFilter">Debug filter (-H)</label>
-                <input
-                  type="text"
-                  id="optHFilter"
-                  class="mono-input"
-                  placeholder="see Security Gateway Guide"
-                  autocomplete="off"
-                  spellcheck="false"
-                />
-                <div class="input-hint">See Security Gateway Guide › Kernel Debug Filters</div>
-              </div>
-            </div>
-          </div>
+          </details>
 
           <div class="input-group" style="margin-top:16px">
             <label class="field-label" for="optOutputFile">Capture to file (tee)</label>
