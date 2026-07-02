@@ -6,9 +6,23 @@
  * Brocade/Ruckus/ICX config. Brocade/ICX shares Cisco's route-map grammar,
  * so both use the same renderer.
  *
- * An optional paste-in panel scans an existing route-map (any of the three
- * vendor syntaxes) for sequence numbers already in use, so new entries can
- * avoid colliding with them and the "suggest next" helper stays gap-aware.
+ * Gaia's route-map grammar is structurally different from Cisco's, per
+ * Check Point's Gaia Advanced Routing Admin Guide:
+ *   set routemap <name> id <seq> {on|off}
+ *   set routemap <name> id <seq> {allow|restrict}
+ *   set routemap <name> id <seq> match network <cidr> {all|exact|between|refines}
+ *   set routemap <name> id <seq> match protocol <proto>
+ *   set routemap <name> id <seq> action metric value <n>
+ *   ...
+ * Networks are matched inline (no prefix-list object required); Cisco and
+ * Brocade/ICX can only match a CIDR via a named prefix-list, so entering
+ * CIDRs in the Networks field auto-generates an `ip prefix-list` block for
+ * those two vendors.
+ *
+ * An optional paste-in panel scans an existing route-map (Gaia or
+ * Cisco/Brocade/ICX syntax) for sequence numbers already in use, learns the
+ * route-map name from it when the name field is still empty, and flags
+ * unrecognized or multi-route-map paste input as an error.
  */
 
 'use strict';
@@ -29,14 +43,18 @@ const entrySeqInput   = $('entrySeq');
 const entrySeqMsg     = 'entrySeqMsg';
 const suggestSeqLink  = $('suggestSeq');
 const entryActionSel  = $('entryAction');
+const entryEnabled    = $('entryEnabled');
 
-const mPrefixList   = $('entryMatchPrefixList');
-const mNextHopList  = $('entryMatchNextHopList');
-const mTag          = $('entryMatchTag');
-const mCommunity    = $('entryMatchCommunity');
-const mCommunityEx  = $('entryMatchCommunityExact');
-const mAsPath       = $('entryMatchAsPath');
-const mInterface    = $('entryMatchInterface');
+const mNetworks      = $('entryMatchNetworks');
+const mNetworkMode   = $('entryMatchNetworkMode');
+const mProtocol      = $('entryMatchProtocol');
+const mPrefixList    = $('entryMatchPrefixList');
+const mNextHopList   = $('entryMatchNextHopList');
+const mTag           = $('entryMatchTag');
+const mCommunity     = $('entryMatchCommunity');
+const mCommunityEx   = $('entryMatchCommunityExact');
+const mAsPath        = $('entryMatchAsPath');
+const mInterface     = $('entryMatchInterface');
 
 const sMetric        = $('entrySetMetric');
 const sLocalPref     = $('entrySetLocalPref');
@@ -119,6 +137,25 @@ function parseOptionalInt(raw, label, min, max) {
   return { valid: true, value: String(n) };
 }
 
+function isValidCidr(s) {
+  if (!/^\d{1,3}(\.\d{1,3}){3}\/\d{1,2}$/.test(s)) return false;
+  const [ip, prefixStr] = s.split('/');
+  const octets = ip.split('.').map(Number);
+  if (octets.some(o => o < 0 || o > 255)) return false;
+  const prefix = parseInt(prefixStr, 10);
+  return prefix >= 0 && prefix <= 32;
+}
+
+function parseNetworks(raw) {
+  const s = (raw || '').trim();
+  if (!s) return { valid: true, value: [] };
+  const lines = s.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  for (const l of lines) {
+    if (!isValidCidr(l)) return { valid: false, error: `"${l}" is not a valid CIDR (e.g. 10.0.0.0/24)` };
+  }
+  return { valid: true, value: lines };
+}
+
 const COMMUNITY_KEYWORDS = ['no-export', 'no-advertise', 'local-as', 'internet', 'graceful-shutdown'];
 
 function parseCommunityValue(raw) {
@@ -156,25 +193,25 @@ function parseIpv4Host(raw) {
 
 // ── Pasted route-map scanning ─────────────────────────────────
 
-// Matches both Cisco/Brocade ("route-map NAME permit|deny SEQ") and Gaia
-// ("set route-map NAME permit|deny SEQ ...") entry lines.
-const IOS_SEQ_RE  = /^\s*route-map\s+(\S+)\s+(permit|deny)\s+(\d+)/gim;
-const GAIA_SEQ_RE = /^\s*set\s+route-map\s+(\S+)\s+(permit|deny)\s+(\d+)/gim;
+// Cisco/Brocade/ICX: "route-map NAME permit|deny SEQ"
+const IOS_SEQ_RE = /^\s*route-map\s+(\S+)\s+(?:permit|deny)\s+(\d+)/gim;
+// Gaia: "set routemap NAME id SEQ ..." (one word "routemap", "id" keyword before the sequence)
+const GAIA_SEQ_RE = /^\s*set\s+routemap\s+(\S+)\s+id\s+(\d+)\b/gim;
 
 function parsePastedSeqs(text) {
   const found = [];
   const seen = new Set();
+
   for (const re of [IOS_SEQ_RE, GAIA_SEQ_RE]) {
     re.lastIndex = 0;
     let m;
     while ((m = re.exec(text))) {
       const name = m[1];
-      const action = m[2].toLowerCase();
-      const seq = parseInt(m[3], 10);
+      const seq = parseInt(m[2], 10);
       const key = `${name.toLowerCase()}|${seq}`;
       if (seen.has(key)) continue;
       seen.add(key);
-      found.push({ name, action, seq });
+      found.push({ name, seq });
     }
   }
   return found;
@@ -226,7 +263,7 @@ function updatePasteInfo() {
 
   const parsed = parsePastedSeqs(raw);
   if (!parsed.length) {
-    setPasteInfo('⚠ Could not recognize any route-map syntax in the pasted text — expected Gaia ("set route-map ...") or Cisco/Brocade/ICX ("route-map ...") entry lines.', true);
+    setPasteInfo('⚠ Could not recognize any route-map syntax in the pasted text — expected Gaia ("set routemap NAME id SEQ ...") or Cisco/Brocade/ICX ("route-map NAME permit|deny SEQ") entry lines.', true);
     return;
   }
 
@@ -268,6 +305,8 @@ function readEntryForm() {
   }
   setFieldMsg(entrySeqInput, entrySeqMsg, seqR);
 
+  const mNetworksR    = parseNetworks(mNetworks.value);
+  const mProtocolR    = parseListName(mProtocol.value, 'Source protocol');
   const mPrefixListR  = parseListName(mPrefixList.value, 'Prefix-list');
   const mNextHopListR = parseListName(mNextHopList.value, 'Next-hop prefix-list');
   const mTagR         = parseOptionalInt(mTag.value, 'Match tag', 0, 4294967295);
@@ -276,13 +315,15 @@ function readEntryForm() {
   const mInterfaceR   = parseListName(mInterface.value, 'Interface');
 
   const sMetricR        = parseOptionalInt(sMetric.value, 'Metric', 0, 4294967295);
-  const sLocalPrefR     = parseOptionalInt(sLocalPref.value, 'Local preference', 0, 4294967295);
+  const sLocalPrefR     = parseOptionalInt(sLocalPref.value, 'Local preference', 0, 65535);
   const sCommunityR     = parseCommunityValue(sCommunity.value);
   const sAsPathPrependR = parseAsPathPrepend(sAsPathPrepend.value);
   const sNextHopR       = parseIpv4Host(sNextHop.value);
   const sTagR           = parseOptionalInt(sTag.value, 'Set tag', 0, 4294967295);
   const sWeightR        = parseOptionalInt(sWeight.value, 'Weight', 0, 65535);
 
+  setFieldMsg(mNetworks,    'entryMatchNetworksMsg',    mNetworksR);
+  setFieldMsg(mProtocol,    'entryMatchProtocolMsg',    mProtocolR);
   setFieldMsg(mPrefixList,  'entryMatchPrefixListMsg',  mPrefixListR);
   setFieldMsg(mNextHopList, 'entryMatchNextHopListMsg', mNextHopListR);
   setFieldMsg(mTag,         'entryMatchTagMsg',         mTagR);
@@ -299,7 +340,7 @@ function readEntryForm() {
   setFieldMsg(sWeight,        'entrySetWeightMsg',        sWeightR);
 
   const results = [
-    seqR, mPrefixListR, mNextHopListR, mTagR, mCommunityR, mAsPathR, mInterfaceR,
+    seqR, mNetworksR, mProtocolR, mPrefixListR, mNextHopListR, mTagR, mCommunityR, mAsPathR, mInterfaceR,
     sMetricR, sLocalPrefR, sCommunityR, sAsPathPrependR, sNextHopR, sTagR, sWeightR,
   ];
   const valid = results.every(r => r.valid);
@@ -307,7 +348,11 @@ function readEntryForm() {
   const entry = {
     seq: seqR.valid ? seqR.value : null,
     action: entryActionSel.value,
+    enabled: entryEnabled.checked,
     match: {
+      networks:    mNetworksR.value,
+      networkMode: mNetworkMode.value,
+      protocol:    mProtocolR.value,
       prefixList:  mPrefixListR.value,
       nextHopList: mNextHopListR.value,
       tag:         mTagR.value,
@@ -335,6 +380,10 @@ function readEntryForm() {
 function resetEntryForm() {
   entrySeqInput.value = String(suggestNextSeq(null));
   entryActionSel.value = 'permit';
+  entryEnabled.checked = true;
+  mNetworks.value = '';
+  mNetworkMode.value = 'all';
+  mProtocol.value = '';
   [mPrefixList, mNextHopList, mTag, mCommunity, mAsPath, mInterface].forEach(el => { el.value = ''; });
   mCommunityEx.checked = false;
   [sMetric, sLocalPref, sCommunity, sAsPathPrepend, sNextHop, sTag, sWeight].forEach(el => { el.value = ''; });
@@ -346,7 +395,7 @@ function resetEntryForm() {
 
   // Clear stale validation state
   const allFields = [
-    entrySeqInput, mPrefixList, mNextHopList, mTag, mCommunity, mAsPath, mInterface,
+    entrySeqInput, mNetworks, mProtocol, mPrefixList, mNextHopList, mTag, mCommunity, mAsPath, mInterface,
     sMetric, sLocalPref, sCommunity, sAsPathPrepend, sNextHop, sTag, sWeight,
   ];
   allFields.forEach(el => el.classList.remove('error'));
@@ -356,6 +405,8 @@ function resetEntryForm() {
 
 function summarizeMatch(m) {
   const parts = [];
+  if (m.networks && m.networks.length) parts.push(`net ${m.networks.join(', ')} (${m.networkMode})`);
+  if (m.protocol)    parts.push(`proto ${m.protocol}`);
   if (m.prefixList)  parts.push(`prefix-list ${m.prefixList}`);
   if (m.nextHopList) parts.push(`next-hop ${m.nextHopList}`);
   if (m.tag)         parts.push(`tag ${m.tag}`);
@@ -381,17 +432,35 @@ function summarizeSet(s) {
 // ── Vendor renderers ──────────────────────────────────────────
 
 // Cisco IOS and Brocade/Ruckus/ICX (FastIron) share the same route-map grammar.
+// Gaia has no per-entry "off" state equivalent, so disabled entries are
+// omitted here (Gaia keeps them, rendered with "off").
 function renderIosLike(name, list) {
-  if (!list.length) return null;
-  const blocks = list.map(e => {
-    const lines = [`route-map ${name} ${e.action} ${e.seq}`];
+  const active = list.filter(e => e.enabled);
+  if (!active.length) return null;
+
+  const preLines = [];
+  const blocks = active.map(e => {
     const m = e.match, s = e.set;
-    if (m.prefixList)  lines.push(` match ip address prefix-list ${m.prefixList}`);
-    if (m.nextHopList) lines.push(` match ip next-hop prefix-list ${m.nextHopList}`);
-    if (m.tag)         lines.push(` match tag ${m.tag}`);
-    if (m.community)   lines.push(` match community ${m.community}${m.communityExact ? ' exact-match' : ''}`);
-    if (m.asPath)      lines.push(` match as-path ${m.asPath}`);
-    if (m.interface)   lines.push(` match interface ${m.interface}`);
+    const lines = [`route-map ${name} ${e.action} ${e.seq}`];
+
+    if (m.networks.length) {
+      const plName = `${name}-${e.seq}-NET`;
+      m.networks.forEach((cidr, idx) => {
+        const geLe = m.networkMode === 'all' ? ' le 32' : '';
+        preLines.push(`ip prefix-list ${plName} seq ${(idx + 1) * 10} permit ${cidr}${geLe}`);
+      });
+      if (m.networkMode === 'between' || m.networkMode === 'refines') {
+        preLines.push(`! note: Gaia "${m.networkMode}" match mode has no exact Cisco/Brocade equivalent — verify manually`);
+      }
+      lines.push(` match ip address prefix-list ${plName}`);
+    }
+    if (m.protocol)     lines.push(` match source-protocol ${m.protocol}`);
+    if (m.prefixList)   lines.push(` match ip address prefix-list ${m.prefixList}`);
+    if (m.nextHopList)  lines.push(` match ip next-hop prefix-list ${m.nextHopList}`);
+    if (m.tag)          lines.push(` match tag ${m.tag}`);
+    if (m.community)    lines.push(` match community ${m.community}${m.communityExact ? ' exact-match' : ''}`);
+    if (m.asPath)       lines.push(` match as-path ${m.asPath}`);
+    if (m.interface)    lines.push(` match interface ${m.interface}`);
     if (s.metric)        lines.push(` set metric ${s.metric}`);
     if (s.localPref)     lines.push(` set local-preference ${s.localPref}`);
     if (s.community)     lines.push(` set community ${s.community}${s.communityAdditive ? ' additive' : ''}`);
@@ -402,29 +471,36 @@ function renderIosLike(name, list) {
     if (s.origin)        lines.push(` set origin ${s.origin}`);
     return lines.join('\n');
   });
-  return blocks.join('\n!\n');
+
+  let out = (preLines.length ? preLines.join('\n') + '\n!\n' : '') + blocks.join('\n!\n');
+  const disabledCount = list.length - active.length;
+  if (disabledCount) {
+    out += `\n! note: ${disabledCount} disabled entr${disabledCount === 1 ? 'y' : 'ies'} omitted — Cisco/Brocade/ICX have no per-entry "off" state`;
+  }
+  return out;
 }
 
 function renderGaia(name, list) {
   if (!list.length) return null;
   const blocks = list.map(e => {
-    const p = `set route-map ${name} ${e.action} ${e.seq}`;
-    const lines = [p];
+    const p = `set routemap ${name} id ${e.seq}`;
+    const lines = [
+      `${p} ${e.enabled ? 'on' : 'off'}`,
+      `${p} ${e.action === 'permit' ? 'allow' : 'restrict'}`,
+    ];
     const m = e.match, s = e.set;
-    if (m.prefixList)  lines.push(`${p} match ip-address-list ${m.prefixList}`);
-    if (m.nextHopList) lines.push(`${p} match ip-next-hop-list ${m.nextHopList}`);
+    m.networks.forEach(cidr => lines.push(`${p} match network ${cidr} ${m.networkMode}`));
+    if (m.protocol)    lines.push(`${p} match protocol ${m.protocol}`);
+    if (m.prefixList)  lines.push(`${p} match prefix-list ${m.prefixList} preference 1 on`);
     if (m.tag)         lines.push(`${p} match tag ${m.tag}`);
-    if (m.community)   lines.push(`${p} match community-list ${m.community}`);
-    if (m.asPath)      lines.push(`${p} match as-path-list ${m.asPath}`);
     if (m.interface)   lines.push(`${p} match interface ${m.interface}`);
-    if (s.metric)        lines.push(`${p} set metric ${s.metric}`);
-    if (s.localPref)     lines.push(`${p} set local-preference ${s.localPref}`);
-    if (s.community)     lines.push(`${p} set community ${s.community}${s.communityAdditive ? ' additive' : ''}`);
-    if (s.asPathPrepend) lines.push(`${p} set as-path-prepend "${s.asPathPrepend}"`);
-    if (s.nextHop)       lines.push(`${p} set next-hop ${s.nextHop}`);
-    if (s.tag)           lines.push(`${p} set tag ${s.tag}`);
-    if (s.weight)        lines.push(`${p} set weight ${s.weight}`);
-    if (s.origin)        lines.push(`${p} set origin ${s.origin}`);
+    if (s.metric)        lines.push(`${p} action metric value ${s.metric}`);
+    if (s.localPref)     lines.push(`${p} action localpref ${s.localPref}`);
+    if (s.asPathPrepend) {
+      const count = s.asPathPrepend.split(/\s+/).filter(Boolean).length;
+      lines.push(`${p} action aspath-prepend-count ${count}`);
+    }
+    if (s.nextHop)       lines.push(`${p} action nexthop ip ${s.nextHop}`);
     return lines.join('\n');
   });
   return blocks.join('\n\n');
@@ -453,8 +529,8 @@ function renderEntryList() {
 
     const actionTd = document.createElement('td');
     const badge = document.createElement('span');
-    badge.className = `rm-action-badge ${e.action}`;
-    badge.textContent = e.action;
+    badge.className = `rm-action-badge ${e.action}${e.enabled ? '' : ' off'}`;
+    badge.textContent = e.action + (e.enabled ? '' : ' · off');
     actionTd.appendChild(badge);
     tr.appendChild(actionTd);
 
@@ -500,6 +576,10 @@ function loadEntryIntoForm(id) {
   editingId = id;
   entrySeqInput.value = String(e.seq);
   entryActionSel.value = e.action;
+  entryEnabled.checked = e.enabled;
+  mNetworks.value = e.match.networks.join('\n');
+  mNetworkMode.value = e.match.networkMode;
+  mProtocol.value = e.match.protocol;
   mPrefixList.value  = e.match.prefixList;
   mNextHopList.value = e.match.nextHopList;
   mTag.value         = e.match.tag;
@@ -636,7 +716,8 @@ suggestSeqLink.addEventListener('click', () => {
 // ── Live validation while typing ─────────────────────────────
 
 const entryFormInputs = [
-  entrySeqInput, entryActionSel,
+  entrySeqInput, entryActionSel, entryEnabled,
+  mNetworks, mNetworkMode, mProtocol,
   mPrefixList, mNextHopList, mTag, mCommunity, mCommunityEx, mAsPath, mInterface,
   sMetric, sLocalPref, sCommunity, sCommunityAdd, sAsPathPrepend, sNextHop, sTag, sWeight, sOrigin,
 ];

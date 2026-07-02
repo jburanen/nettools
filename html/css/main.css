@@ -1041,6 +1041,7 @@ details.collapsible-section > .collapsible-body {
 }
 .rm-action-badge.permit { background: rgba(92,224,138,0.12); color: var(--green); border: 1px solid rgba(92,224,138,0.35); }
 .rm-action-badge.deny   { background: rgba(224,92,92,0.12); color: var(--red); border: 1px solid rgba(224,92,92,0.35); }
+.rm-action-badge.off    { opacity: 0.5; }
 
 .rm-row-actions { display: flex; gap: 8px; }
 .rm-row-btn {

@@ -74,7 +74,7 @@
                 id="pasteText"
                 class="mono-input compose-input"
                 style="min-height:120px"
-                placeholder="route-map RM-BGP-IN permit 10&#10; match ip address prefix-list PL1&#10;..."
+                placeholder="set routemap RM-BGP-IN id 10 on&#10;set routemap RM-BGP-IN id 10 allow&#10;set routemap RM-BGP-IN id 10 match protocol static&#10;... or Cisco-style: route-map RM-BGP-IN permit 10"
                 autocomplete="off"
                 spellcheck="false"
               ></textarea>
@@ -123,10 +123,17 @@
                 </div>
                 <div class="input-group">
                   <label class="field-label" for="entryAction">Action</label>
-                  <select id="entryAction" class="mono-input" style="max-width:140px">
-                    <option value="permit">permit</option>
-                    <option value="deny">deny</option>
+                  <select id="entryAction" class="mono-input" style="max-width:180px">
+                    <option value="permit">permit (Gaia: allow)</option>
+                    <option value="deny">deny (Gaia: restrict)</option>
                   </select>
+                </div>
+                <div class="input-group">
+                  <label class="toggle-row" style="margin-bottom:9px">
+                    <input type="checkbox" id="entryEnabled" class="toggle-check" checked />
+                    <span class="toggle-label">Enabled</span>
+                  </label>
+                  <div class="input-hint" style="margin-top:0">Unchecked → Gaia emits <code style="color:var(--cyan)">off</code>; Cisco/Brocade omit the entry (no disable state)</div>
                 </div>
                 <div class="input-group">
                   <span class="hint-val" id="suggestSeq"></span>
@@ -138,13 +145,35 @@
                   <div class="filter-section-label">MATCH</div>
 
                   <div class="input-group">
-                    <label class="field-label" for="entryMatchPrefixList">Prefix-list (route filter)</label>
+                    <div class="field-label-row">
+                      <label class="field-label" for="entryMatchNetworks">Networks (one CIDR per line)</label>
+                      <select id="entryMatchNetworkMode" class="mono-input" style="max-width:110px">
+                        <option value="all">all</option>
+                        <option value="exact">exact</option>
+                        <option value="between">between</option>
+                        <option value="refines">refines</option>
+                      </select>
+                    </div>
+                    <textarea id="entryMatchNetworks" class="mono-input" style="min-height:70px" placeholder="10.10.0.0/24&#10;192.168.4.0/28" autocomplete="off" spellcheck="false"></textarea>
+                    <div class="field-msg" id="entryMatchNetworksMsg"></div>
+                    <div class="input-hint">Gaia: inline <code style="color:var(--cyan)">match network</code> lines. Cisco/Brocade: auto-generates a prefix-list named from the route-map + sequence.</div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entryMatchProtocol">Source protocol</label>
+                    <input type="text" id="entryMatchProtocol" class="mono-input" placeholder="e.g. static, direct, bgp, ospf2" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entryMatchProtocolMsg"></div>
+                    <div class="input-hint">Gaia: <code style="color:var(--cyan)">match protocol</code>. Cisco/Brocade: <code style="color:var(--cyan)">match source-protocol</code></div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entryMatchPrefixList">Prefix-list (existing object)</label>
                     <input type="text" id="entryMatchPrefixList" class="mono-input" placeholder="e.g. PL-IN" autocomplete="off" spellcheck="false" />
                     <div class="field-msg" id="entryMatchPrefixListMsg"></div>
                   </div>
 
                   <div class="input-group">
-                    <label class="field-label" for="entryMatchNextHopList">Next-hop prefix-list</label>
+                    <label class="field-label" for="entryMatchNextHopList">Next-hop prefix-list <span class="input-hint" style="margin:0;display:inline">(Cisco/Brocade only)</span></label>
                     <input type="text" id="entryMatchNextHopList" class="mono-input" placeholder="e.g. PL-NH" autocomplete="off" spellcheck="false" />
                     <div class="field-msg" id="entryMatchNextHopListMsg"></div>
                   </div>
@@ -157,7 +186,7 @@
 
                   <div class="input-group">
                     <div class="field-label-row">
-                      <label class="field-label" for="entryMatchCommunity">Community-list</label>
+                      <label class="field-label" for="entryMatchCommunity">Community-list <span class="input-hint" style="margin:0;display:inline">(Cisco/Brocade only)</span></label>
                       <label class="toggle-row" style="margin-bottom:0">
                         <input type="checkbox" id="entryMatchCommunityExact" class="toggle-check" />
                         <span class="toggle-label">exact-match</span>
@@ -168,7 +197,7 @@
                   </div>
 
                   <div class="input-group">
-                    <label class="field-label" for="entryMatchAsPath">AS-path list</label>
+                    <label class="field-label" for="entryMatchAsPath">AS-path list <span class="input-hint" style="margin:0;display:inline">(Cisco/Brocade only)</span></label>
                     <input type="text" id="entryMatchAsPath" class="mono-input" placeholder="e.g. AP-TRANSIT" autocomplete="off" spellcheck="false" />
                     <div class="field-msg" id="entryMatchAsPathMsg"></div>
                   </div>
@@ -193,11 +222,12 @@
                     <label class="field-label" for="entrySetLocalPref">Local preference</label>
                     <input type="text" id="entrySetLocalPref" class="mono-input" placeholder="e.g. 200" inputmode="numeric" autocomplete="off" spellcheck="false" />
                     <div class="field-msg" id="entrySetLocalPrefMsg"></div>
+                    <div class="input-hint">0–65535 (Gaia's limit — also valid on Cisco/Brocade)</div>
                   </div>
 
                   <div class="input-group">
                     <div class="field-label-row">
-                      <label class="field-label" for="entrySetCommunity">Community</label>
+                      <label class="field-label" for="entrySetCommunity">Community <span class="input-hint" style="margin:0;display:inline">(Cisco/Brocade only)</span></label>
                       <label class="toggle-row" style="margin-bottom:0">
                         <input type="checkbox" id="entrySetCommunityAdditive" class="toggle-check" />
                         <span class="toggle-label">additive</span>
@@ -212,6 +242,7 @@
                     <label class="field-label" for="entrySetAsPathPrepend">AS-path prepend</label>
                     <input type="text" id="entrySetAsPathPrepend" class="mono-input" placeholder="e.g. 65000 65000" autocomplete="off" spellcheck="false" />
                     <div class="field-msg" id="entrySetAsPathPrependMsg"></div>
+                    <div class="input-hint">Cisco/Brocade: prepends these exact AS numbers. Gaia only supports prepending its own AS N times — renders as <code style="color:var(--cyan)">aspath-prepend-count</code> using the token count entered here.</div>
                   </div>
 
                   <div class="input-group">
@@ -221,19 +252,19 @@
                   </div>
 
                   <div class="input-group">
-                    <label class="field-label" for="entrySetTag">Tag</label>
+                    <label class="field-label" for="entrySetTag">Tag <span class="input-hint" style="margin:0;display:inline">(Cisco/Brocade only)</span></label>
                     <input type="text" id="entrySetTag" class="mono-input" placeholder="e.g. 200" inputmode="numeric" autocomplete="off" spellcheck="false" />
                     <div class="field-msg" id="entrySetTagMsg"></div>
                   </div>
 
                   <div class="input-group">
-                    <label class="field-label" for="entrySetWeight">Weight</label>
+                    <label class="field-label" for="entrySetWeight">Weight <span class="input-hint" style="margin:0;display:inline">(Cisco/Brocade only)</span></label>
                     <input type="text" id="entrySetWeight" class="mono-input" placeholder="e.g. 500" inputmode="numeric" autocomplete="off" spellcheck="false" />
                     <div class="field-msg" id="entrySetWeightMsg"></div>
                   </div>
 
                   <div class="input-group" style="margin-bottom:0">
-                    <label class="field-label" for="entrySetOrigin">Origin</label>
+                    <label class="field-label" for="entrySetOrigin">Origin <span class="input-hint" style="margin:0;display:inline">(Cisco/Brocade only)</span></label>
                     <select id="entrySetOrigin" class="mono-input">
                       <option value="">unset</option>
                       <option value="igp">igp</option>
