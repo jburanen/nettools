@@ -93,22 +93,14 @@ function runCalculation() {
 
 function renderResults(r) {
   const cards = [
-    { label: 'Network Address', value: r.network,    sub: r.cidr,             cls: 'cyan',  highlight: true },
-    { label: 'Subnet Mask',     value: r.subnetMask, sub: `/${r.prefix}`,                              },
-    { label: 'Broadcast',       value: r.broadcast,  sub: 'last address',     cls: 'red'   },
-    { label: 'First Usable',    value: r.hostMin,    sub: r.prefix >= 31 ? '(point-to-point)' : '',    },
-    { label: 'Last Usable',     value: r.hostMax,    sub: '',                                           },
-    {
-      label: 'Usable Hosts',
-      value: Subnet.commas(r.usableHosts),
-      sub:   `${Subnet.commas(r.totalHosts)} total addresses`,
-      cls:   'green',
-      highlight: true,
-    },
-    { label: 'Wildcard Mask',   value: r.wildcard,   sub: 'inverse mask'                               },
-    { label: 'IP Class',        value: `Class ${r.legacyClass}`,  sub: 'legacy classful'               },
-    { label: 'RFC Scope',       value: r.rfc,        sub: '',     cls: r.rfc.includes('private') ? 'amber' : '' },
-    { label: 'Your IP',         value: r.ip,         sub: r.prefix < 32 ? 'host address entered' : 'host /32' },
+    { label: 'Network Address', value: r.network,    cls: 'cyan',  highlight: true },
+    { label: 'Subnet Mask',     value: r.subnetMask                               },
+    { label: 'Broadcast',       value: r.broadcast,  cls: 'red'   },
+    { label: 'First Usable',    value: r.hostMin                                  },
+    { label: 'Last Usable',     value: r.hostMax                                  },
+    { label: 'Usable Hosts',    value: Subnet.commas(r.usableHosts), cls: 'green', highlight: true },
+    { label: 'Wildcard Mask',   value: r.wildcard                                 },
+    { label: 'RFC Scope',       value: r.rfc,        cls: r.rfc.includes('private') ? 'amber' : '' },
   ];
 
   resultGrid.innerHTML = '';
@@ -119,7 +111,6 @@ function renderResults(r) {
       <button class="copy-btn" title="Copy">copy</button>
       <div class="result-label">${c.label}</div>
       <div class="result-value${c.cls ? ' ' + c.cls : ''}">${escHtml(c.value)}</div>
-      ${c.sub ? `<div class="result-sub">${escHtml(c.sub)}</div>` : ''}
     `;
 
     const copyBtn = card.querySelector('.copy-btn');

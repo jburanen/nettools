@@ -409,15 +409,15 @@ input  { font-family: var(--font); }
 /* --- Results Grid ----------------------------------------- */
 .result-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
 }
 
 .result-card {
   background: var(--bg-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 14px 16px;
+  padding: 10px 14px;
   position: relative;
   transition: border-color 0.15s;
 }
@@ -433,7 +433,7 @@ input  { font-family: var(--font); }
   color: var(--text-muted);
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
 }
 
 .result-value {
@@ -446,12 +446,6 @@ input  { font-family: var(--font); }
 .result-value.amber { color: var(--amber); }
 .result-value.green { color: var(--green); }
 .result-value.red   { color: var(--red); }
-
-.result-sub {
-  font-size: 0.7rem;
-  color: var(--text-secondary);
-  margin-top: 4px;
-}
 
 .copy-btn {
   position: absolute;
