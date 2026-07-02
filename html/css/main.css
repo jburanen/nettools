@@ -978,6 +978,99 @@ details.collapsible-section > .collapsible-body {
   left: 0;
 }
 
+/* --- Route-Map Builder -------------------------------------- */
+
+.vendor-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.vendor-tab {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.vendor-tab:hover { border-color: var(--cyan-dim); color: var(--text-primary); }
+.vendor-tab.active {
+  background: var(--cyan-glow);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.compose-output-pre.has-errors { border-color: rgba(230,168,23,0.5); }
+.compose-output-pre.rm-output-empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.rm-vendor-note {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin: -8px 0 16px;
+}
+
+.rm-entries-empty {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  padding: 10px 0;
+}
+
+.rm-summary-cell {
+  white-space: normal;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  max-width: 260px;
+}
+
+.rm-action-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.rm-action-badge.permit { background: rgba(92,224,138,0.12); color: var(--green); border: 1px solid rgba(92,224,138,0.35); }
+.rm-action-badge.deny   { background: rgba(224,92,92,0.12); color: var(--red); border: 1px solid rgba(224,92,92,0.35); }
+
+.rm-row-actions { display: flex; gap: 8px; }
+.rm-row-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0;
+  transition: color 0.15s;
+}
+.rm-row-btn:hover { color: var(--cyan); }
+.rm-row-btn.rm-remove:hover { color: var(--red); }
+
+.rm-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.rm-seq-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.rm-seq-row .input-group { margin-bottom: 0; }
+.rm-seq-row .hint-val { padding-bottom: 9px; display: inline-block; }
+
 /* --- Scrollbar -------------------------------------------- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }

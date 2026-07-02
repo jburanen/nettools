@@ -54,11 +54,10 @@
       <span class="nav-label">Skyline</span>
       <span class="nav-badge">2 weeks</span>
     </div>
-    <div class="nav-item disabled" title="Coming soon">
+    <a href="routemap.html" class="nav-item" data-tool="routemap">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">routemap</span>
-      <span class="nav-badge">2 weeks</span>
-    </div>
+    </a>
     <div class="nav-item disabled" title="Coming soon">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">Route-based VPN</span>
@@ -88,7 +87,7 @@
 
   // Mark the active nav item based on the current page filename
   const page = window.location.pathname.split('/').pop() || 'index.html';
-  const toolMap = { 'subnet.html': 'subnet', 'tcpdump.html': 'tcpdump', 'fw-monitor.html': 'fw-monitor', 'fw-zdebug.html': 'fw-zdebug', 'compose-converter.html': 'compose-converter', 'mqtt.html': 'mqtt' };
+  const toolMap = { 'subnet.html': 'subnet', 'tcpdump.html': 'tcpdump', 'fw-monitor.html': 'fw-monitor', 'fw-zdebug.html': 'fw-zdebug', 'compose-converter.html': 'compose-converter', 'mqtt.html': 'mqtt', 'routemap.html': 'routemap' };
   const activeTool = toolMap[page];
   if (activeTool) {
     const link = document.querySelector(`.nav-item[data-tool="${activeTool}"]`);

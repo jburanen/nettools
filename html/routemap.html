@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <title>NetTools — Route-Map Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <div id="sidebar-mount"></div>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+        <div class="breadcrumb">
+          <span class="bc-root">// configurators</span>
+          <span class="bc-sep">/</span>
+          <span class="bc-current">routemap-builder</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="tool-view tool-view--wide" id="tool-routemap">
+      <div class="tool-header">
+        <h1 class="tool-title">Route-Map Builder</h1>
+        <p class="tool-desc">Build a route-map policy from source protocol match/set clauses and export it as Check Point Gaia, Cisco IOS, or Brocade/Ruckus/ICX config. Optionally paste an existing route-map to keep new sequence numbers from colliding with entries already in use.</p>
+      </div>
+
+      <div class="tool-body">
+
+        <!-- Generated Output -->
+        <section class="panel" id="outputPanel">
+          <div class="panel-label">// generated route-map</div>
+          <div class="vendor-tabs">
+            <button type="button" class="vendor-tab active" data-vendor="gaia">Check Point Gaia</button>
+            <button type="button" class="vendor-tab" data-vendor="cisco">Cisco IOS</button>
+            <button type="button" class="vendor-tab" data-vendor="brocade">Brocade / Ruckus / ICX</button>
+          </div>
+          <pre class="compose-output-pre" id="rmOutput"></pre>
+          <div class="rm-vendor-note">Command keywords follow common vendor conventions — verify against your platform's routing CLI reference before deploying, especially on Gaia.</div>
+          <div class="cmd-actions">
+            <button class="btn-primary" id="copyBtn">Copy Command</button>
+            <span class="copy-feedback" id="copyFeedback"></span>
+            <span class="auto-copy-note" id="autoCopyNote"></span>
+          </div>
+        </section>
+
+        <!-- Route-map name + existing route-map paste -->
+        <section class="panel input-panel">
+          <div class="panel-label">// route-map</div>
+          <div class="input-group" style="margin-bottom:0">
+            <label class="field-label" for="rmName">Route-map name</label>
+            <input
+              type="text"
+              id="rmName"
+              class="mono-input"
+              placeholder="e.g. RM-BGP-IN"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <div class="field-msg" id="rmNameMsg"></div>
+          </div>
+
+          <details class="collapsible-section">
+            <summary>PASTE EXISTING ROUTE-MAP (check numbering)</summary>
+            <div class="collapsible-body">
+              <div class="input-hint" style="margin-bottom:8px">Paste a route-map from Gaia, Cisco IOS, or Brocade/Ruckus/ICX. Its sequence numbers are checked against the route-map name above so new entries don't collide.</div>
+              <textarea
+                id="pasteText"
+                class="mono-input compose-input"
+                style="min-height:120px"
+                placeholder="route-map RM-BGP-IN permit 10&#10; match ip address prefix-list PL1&#10;..."
+                autocomplete="off"
+                spellcheck="false"
+              ></textarea>
+              <div class="input-hint" id="pasteInfo" style="margin-top:8px"></div>
+            </div>
+          </details>
+        </section>
+
+        <!-- Entries -->
+        <section class="panel input-panel">
+          <div class="panel-label">// entries</div>
+
+          <div class="subnets-table-wrap">
+            <table class="subnets-table">
+              <thead>
+                <tr>
+                  <th>Seq</th>
+                  <th>Action</th>
+                  <th>Match</th>
+                  <th>Set</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="entryTableBody"></tbody>
+            </table>
+          </div>
+          <div class="rm-entries-empty" id="entryEmpty">No entries yet — build one below and click "Add Entry".</div>
+
+          <details class="collapsible-section" open>
+            <summary>ADD / EDIT ENTRY</summary>
+            <div class="collapsible-body">
+
+              <div class="rm-seq-row">
+                <div class="input-group">
+                  <label class="field-label" for="entrySeq">Sequence</label>
+                  <input
+                    type="text"
+                    id="entrySeq"
+                    class="mono-input"
+                    style="max-width:120px"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                  <div class="field-msg" id="entrySeqMsg"></div>
+                </div>
+                <div class="input-group">
+                  <label class="field-label" for="entryAction">Action</label>
+                  <select id="entryAction" class="mono-input" style="max-width:140px">
+                    <option value="permit">permit</option>
+                    <option value="deny">deny</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <span class="hint-val" id="suggestSeq"></span>
+                </div>
+              </div>
+
+              <div class="filter-grid" style="grid-template-columns:1fr 1fr">
+                <div class="filter-section">
+                  <div class="filter-section-label">MATCH</div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entryMatchPrefixList">Prefix-list (route filter)</label>
+                    <input type="text" id="entryMatchPrefixList" class="mono-input" placeholder="e.g. PL-IN" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entryMatchPrefixListMsg"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entryMatchNextHopList">Next-hop prefix-list</label>
+                    <input type="text" id="entryMatchNextHopList" class="mono-input" placeholder="e.g. PL-NH" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entryMatchNextHopListMsg"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entryMatchTag">Tag</label>
+                    <input type="text" id="entryMatchTag" class="mono-input" placeholder="e.g. 100" inputmode="numeric" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entryMatchTagMsg"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <div class="field-label-row">
+                      <label class="field-label" for="entryMatchCommunity">Community-list</label>
+                      <label class="toggle-row" style="margin-bottom:0">
+                        <input type="checkbox" id="entryMatchCommunityExact" class="toggle-check" />
+                        <span class="toggle-label">exact-match</span>
+                      </label>
+                    </div>
+                    <input type="text" id="entryMatchCommunity" class="mono-input" placeholder="e.g. CL-CUSTOMERS" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entryMatchCommunityMsg"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entryMatchAsPath">AS-path list</label>
+                    <input type="text" id="entryMatchAsPath" class="mono-input" placeholder="e.g. AP-TRANSIT" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entryMatchAsPathMsg"></div>
+                  </div>
+
+                  <div class="input-group" style="margin-bottom:0">
+                    <label class="field-label" for="entryMatchInterface">Interface</label>
+                    <input type="text" id="entryMatchInterface" class="mono-input" placeholder="e.g. eth0" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entryMatchInterfaceMsg"></div>
+                  </div>
+                </div>
+
+                <div class="filter-section">
+                  <div class="filter-section-label">SET</div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entrySetMetric">Metric</label>
+                    <input type="text" id="entrySetMetric" class="mono-input" placeholder="e.g. 50" inputmode="numeric" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entrySetMetricMsg"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entrySetLocalPref">Local preference</label>
+                    <input type="text" id="entrySetLocalPref" class="mono-input" placeholder="e.g. 200" inputmode="numeric" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entrySetLocalPrefMsg"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <div class="field-label-row">
+                      <label class="field-label" for="entrySetCommunity">Community</label>
+                      <label class="toggle-row" style="margin-bottom:0">
+                        <input type="checkbox" id="entrySetCommunityAdditive" class="toggle-check" />
+                        <span class="toggle-label">additive</span>
+                      </label>
+                    </div>
+                    <input type="text" id="entrySetCommunity" class="mono-input" placeholder="e.g. 65000:100" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entrySetCommunityMsg"></div>
+                    <div class="input-hint">Space-separated ASN:NN values or well-known keywords (no-export, no-advertise, local-as, internet)</div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entrySetAsPathPrepend">AS-path prepend</label>
+                    <input type="text" id="entrySetAsPathPrepend" class="mono-input" placeholder="e.g. 65000 65000" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entrySetAsPathPrependMsg"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entrySetNextHop">Next-hop</label>
+                    <input type="text" id="entrySetNextHop" class="mono-input" placeholder="e.g. 10.0.0.1" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entrySetNextHopMsg"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entrySetTag">Tag</label>
+                    <input type="text" id="entrySetTag" class="mono-input" placeholder="e.g. 200" inputmode="numeric" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entrySetTagMsg"></div>
+                  </div>
+
+                  <div class="input-group">
+                    <label class="field-label" for="entrySetWeight">Weight</label>
+                    <input type="text" id="entrySetWeight" class="mono-input" placeholder="e.g. 500" inputmode="numeric" autocomplete="off" spellcheck="false" />
+                    <div class="field-msg" id="entrySetWeightMsg"></div>
+                  </div>
+
+                  <div class="input-group" style="margin-bottom:0">
+                    <label class="field-label" for="entrySetOrigin">Origin</label>
+                    <select id="entrySetOrigin" class="mono-input">
+                      <option value="">unset</option>
+                      <option value="igp">igp</option>
+                      <option value="egp">egp</option>
+                      <option value="incomplete">incomplete</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rm-form-actions">
+                <button type="button" class="btn-primary" id="addEntryBtn">Add Entry</button>
+                <button type="button" class="btn-secondary" id="cancelEditBtn" hidden>Cancel Edit</button>
+              </div>
+            </div>
+          </details>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="js/sidebar.js"></script>
+  <script src="js/routemap.js"></script>
+</body>
+</html>
