@@ -34,6 +34,20 @@ server-setup.sh
 4. Add a tool card to `index.html`
 5. No registration, routing, or build step needed
 
+## Versioning
+
+Every tool shows a version next to its `<h1 class="tool-title">`:
+
+```html
+<h1 class="tool-title">Tool Name<span class="tool-version">v0.3.1</span></h1>
+```
+
+- Format is `major.minor.patch`. Stay on `0.x.y` — do not bump to `1.0.0` unless the user explicitly says a tool is production-ready.
+- Bump **patch** for bug fixes or small corrections to a tool.
+- Bump **minor** when a tool gains a new field, vendor target, or user-facing capability.
+- **Whenever you (Claude) materially change a tool's `.html` or `.js` files, bump that tool's version in the same change** — don't wait for the user to ask. Only touch the version of the tool you actually changed.
+- A tool still under active/incomplete development also gets a `<span class="wip-badge">Under Construction</span>` next to its version, plus a matching `<span class="wip-badge">WIP</span>` on its sidebar nav entry (`sidebar.js`) and homepage tool card (`index.html`). Remove all three once the user confirms the tool is stable.
+
 ## HTML Page Shell
 
 Every tool page has this structure:

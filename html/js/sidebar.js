@@ -57,6 +57,7 @@
     <a href="routemap.html" class="nav-item" data-tool="routemap">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">routemap</span>
+      <span class="wip-badge">WIP</span>
     </a>
     <div class="nav-item disabled" title="Coming soon">
       <span class="nav-icon">⬡</span>

@@ -262,6 +262,26 @@ input  { font-family: var(--font); }
   line-height: 1.6;
 }
 
+.tool-version {
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 10px;
+}
+
+.wip-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: rgba(230,168,23,0.12);
+  border: 1px solid rgba(230,168,23,0.4);
+  padding: 2px 7px;
+  border-radius: 3px;
+  vertical-align: middle;
+  font-family: var(--font);
+}
+
 .tool-body { display: flex; flex-direction: column; gap: 20px; }
 
 /* --- Panels ----------------------------------------------- */
