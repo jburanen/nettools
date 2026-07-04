@@ -190,8 +190,8 @@ See `.env.example` for the full, commented list of every variable and its defaul
 
 ### MQTT Client
 
-- Connect to an MQTT broker over WebSocket (via the bundled `mqtt-proxy` tunnel)
-- Browse published topics in a live-updating tree; subscribe to any topic filter and watch values update in real time
+- Connect to an MQTT broker over WebSocket (browser-native) or MQTT (via the bundled `mqtt-proxy` <a href=https://mosquitto.org/>Mosquitto</a> container)
+- Browse published topics and values in a live-updating tree
 
 ### routemap Builder *(WIP)*
 
