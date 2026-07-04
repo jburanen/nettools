@@ -23,12 +23,14 @@ services:
     container_name: mqtt-proxy
     restart: unless-stopped
 
-  fwctl:
+  nettools:
     build:
       context: .
       dockerfile: Dockerfile
     image: nettools:latest
     # Override with CONTAINER_NAME in .env. Default: nettools
+    # (the runtime container name; the service key above is static
+    #  because Compose can't substitute env vars into service keys.)
     container_name: ${CONTAINER_NAME:-nettools}
     restart: unless-stopped
     # Optional theming — values come from an (optional) .env file in
