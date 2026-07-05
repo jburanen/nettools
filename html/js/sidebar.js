@@ -102,6 +102,10 @@
     const el = document.querySelector('.logo-sub');
     if (el) el.textContent = cfg.logoSub;
   }
+  if (cfg.logoLink) {
+    const el = document.querySelector('.logo');
+    if (el) el.setAttribute('href', cfg.logoLink);
+  }
 
   // Remove nav entries for modules disabled via .env (config.js has already
   // normalized cfg.disabledModules to an array of slugs).

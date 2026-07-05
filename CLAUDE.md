@@ -236,10 +236,11 @@ into static assets **at container startup**:
 - `theme.css` re-declares `:root` (colors, `--input-bg`, `--font`, `--fs-*`);
   loaded after `main.css` so it wins. `config.js` sets `window.NETTOOLS_CONFIG`
   (`logoText`/`logoAccent` → the two sidebar logo spans, `logoSub` → the
-  muted subtitle line, all via `sidebar.js`; `tabTitle` → swaps the "NetTools"
+  muted subtitle line, `logoLink` → the logo anchor's `href` (default
+  `index.html`), all via `sidebar.js`; `tabTitle` → swaps the "NetTools"
   prefix in each page's `<title>`). These brand vars default to empty, so page
   text is left as-authored unless set.
-- Vars: `LOGO_TEXT`, `LOGO_ACCENT`, `LOGO_SUB`, `TAB_TITLE`, `COLOR_PRIMARY/WARNING/ERROR/BG/INPUT_BG/BORDER`,
+- Vars: `LOGO_TEXT`, `LOGO_ACCENT`, `LOGO_SUB`, `LOGO_LINK`, `TAB_TITLE`, `COLOR_PRIMARY/WARNING/ERROR/BG/INPUT_BG/BORDER`,
   `FONT_FAMILY`, `TEXT_BASE_SIZE` (scales all rem text) + `TEXT_TITLE/BODY/LABEL/SMALL/NAV_SIZE`.
 - `DISABLED_MODULES` — comma-separated tool slugs (filename base, e.g. `mqtt,routemap`);
   all enabled by default. `config.js` removes disabled `.tool-card`s and redirects a

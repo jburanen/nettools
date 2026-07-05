@@ -41,6 +41,7 @@ services:
       - LOGO_TEXT=${LOGO_TEXT:-}
       - LOGO_ACCENT=${LOGO_ACCENT:-}
       - LOGO_SUB=${LOGO_SUB:-}
+      - LOGO_LINK=${LOGO_LINK:-}
       - TAB_TITLE=${TAB_TITLE:-}
       - DISABLED_MODULES=${DISABLED_MODULES:-}
       - COLOR_PRIMARY=${COLOR_PRIMARY:-}

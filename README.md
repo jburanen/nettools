@@ -116,7 +116,8 @@ built-in default, so an empty or absent `.env` changes nothing.
 applies them without a rebuild.
 
 **Branding** — `LOGO_TEXT` / `LOGO_ACCENT` (the two-tone sidebar logo),
-`LOGO_SUB` (logo subtitle), `TAB_TITLE` (browser-tab brand prefix).
+`LOGO_SUB` (logo subtitle), `LOGO_LINK` (where the logo links to; default the
+home page), `TAB_TITLE` (browser-tab brand prefix).
 
 **Theme** — `COLOR_PRIMARY`, `COLOR_WARNING`, `COLOR_ERROR`, `COLOR_BG`,
 `COLOR_INPUT_BG`, `COLOR_BORDER`, `FONT_FAMILY`, and text sizes
@@ -197,7 +198,7 @@ See `.env.example` for the full, commented list of every variable and its defaul
 - Build route-map match/set entries and export as Check Point Gaia, Cisco IOS, or Brocade/Ruckus/ICX config
 - Paste an existing route-map to keep new sequence numbers from colliding
 
-### Coming in two weeks (if you know, you know)
+### Coming in two weeks "</inside joke>"
 
 - cppcap Builder
 - IKE debug Builder

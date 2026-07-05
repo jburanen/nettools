@@ -11,6 +11,7 @@ window.NETTOOLS_CONFIG = {
   logoText:        "${LOGO_TEXT}",
   logoAccent:      "${LOGO_ACCENT}",
   logoSub:         "${LOGO_SUB}",
+  logoLink:        "${LOGO_LINK}",
   tabTitle:        "${TAB_TITLE}",
   disabledModules: "${DISABLED_MODULES}"
 };
