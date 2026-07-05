@@ -628,7 +628,7 @@ function updateOutput() {
     outputPre.classList.remove('rm-output-empty');
   } else {
     outputPre.textContent = !nameR.valid
-      ? 'Enter a route-map name above to generate output.'
+      ? 'Enter a route-map name below to generate output.'
       : 'Add at least one entry below to generate output.';
     outputPre.classList.add('rm-output-empty');
   }
