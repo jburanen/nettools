@@ -1,6 +1,6 @@
 # NetTools — CLAUDE.md
 
-Vanilla JS network toolkit. No build system, no framework, no npm in the frontend. All computation runs client-side. Served by nginx in Docker.
+Vanilla JS network toolkit. No build system, no framework, no npm in the frontend. Most computation runs client-side. Served by nginx in Docker, should be behind a reverse proxy if published on the internet.
 
 ## Structure
 
