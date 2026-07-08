@@ -7,7 +7,7 @@ ehthumbs.db
 # ── VS Code ──────────────────────────────────────────────────────────
 .vscode/settings.json
 .vscode/launch.json
-.vscode/*.code-workspace
+*.code-workspace
 *.swp
 *~
 
@@ -15,6 +15,7 @@ ehthumbs.db
 .claude/settings.local.json
 .claude/todos/
 .claude/mcp.json
+.claude/memory/
 
 # ── Environment / Secrets ────────────────────────────────────────────
 *.pem
