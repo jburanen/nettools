@@ -198,7 +198,7 @@ See `.env.example` for the full, commented list of every variable and its defaul
 - Build route-map match/set entries and export as Check Point Gaia, Cisco IOS, or Brocade/Ruckus/ICX config
 - Paste an existing route-map to keep new sequence numbers from colliding
 
-### Coming in two weeks </inside joke>
+### Planned modules - coming in two weeks </inside joke>
 
 - cppcap Builder
 - IKE debug Builder
@@ -209,6 +209,15 @@ See `.env.example` for the full, commented list of every variable and its defaul
 
 - Troubleshooting Coach
 - URL shortener
+
+### General wishlist proposals
+
+- CHKP cpinfo parser
+- CHKP cpview history viewer
+- Tips and tricks / cheatsheets
+- CHKP debug analyzer
+- API script reviewer - human-readable explanation of script
+- Link directory to external tools
 
 ---
 
