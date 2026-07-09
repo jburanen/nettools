@@ -273,6 +273,14 @@ The MQTT proxy (Node.js WebSocket tunnel) runs as a second service in docker-com
 
 CI/CD: `server-setup.sh` configures a GitHub webhook on the server that auto-runs deploy on push to main.
 
+## Git Commits
+
+Whenever Claude is used to update code, add Claude as a co-author on the commit:
+
+```
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
 ## Constraints
 
 - **No external JS libraries** in the frontend — keep it that way
