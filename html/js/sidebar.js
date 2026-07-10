@@ -38,15 +38,15 @@
       <span class="nav-icon">⬡</span>
       <span class="nav-label">fw monitor</span>
     </a>
+    <a href="fw-zdebug.html" class="nav-item" data-tool="fw-zdebug">
+      <span class="nav-icon">⬡</span>
+      <span class="nav-label">fw ctl zdebug</span>
+    </a>
     <div class="nav-item disabled" title="Coming soon">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">cppcap</span>
       <span class="nav-badge">2 weeks</span>
     </div>
-    <a href="fw-zdebug.html" class="nav-item" data-tool="fw-zdebug">
-      <span class="nav-icon">⬡</span>
-      <span class="nav-label">fw ctl zdebug</span>
-    </a>
     <div class="nav-item disabled" title="Coming soon">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">IKE debug</span>
@@ -54,11 +54,6 @@
     </div>
 
     <div class="nav-section-label">// configurators</div>
-    <div class="nav-item disabled" title="Coming soon">
-      <span class="nav-icon">⬡</span>
-      <span class="nav-label">Skyline</span>
-      <span class="nav-badge">2 weeks</span>
-    </div>
     <a href="routemap.html" class="nav-item" data-tool="routemap">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">routemap</span>
@@ -67,6 +62,16 @@
     <div class="nav-item disabled" title="Coming soon">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">Route-based VPN</span>
+      <span class="nav-badge">2 weeks</span>
+    </div>
+    <div class="nav-item disabled" title="Coming soon">
+      <span class="nav-icon">⬡</span>
+      <span class="nav-label">Skyline</span>
+      <span class="nav-badge">2 weeks</span>
+    </div>
+    <div class="nav-item disabled" title="Coming soon">
+      <span class="nav-icon">⬡</span>
+      <span class="nav-label">VyOS Router</span>
       <span class="nav-badge">2 weeks</span>
     </div>
   </nav>

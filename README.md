@@ -206,6 +206,7 @@ See `.env.example` for the full, commented list of every variable and its defaul
 - IKE debug Builder
 - Route-based VPN Configurator
 - Skyline config builder
+- VyOS Router Configurator
 
 ### Tangent projects that can't be browser local and might spin off
 
