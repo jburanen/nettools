@@ -170,6 +170,7 @@ values and is loaded after `main.css`, so it wins. See Theming below.
 
 **Toggles / pills**
 - `.toggle-row` — label wrapping a checkbox + toggle-label span
+- `.option-toggles.two-col` — two-column grid variant of the toggle list for longer flag sets (cppcap screen output options); collapses to one column at 720px
 - `.toggle-flag` — cyan flag badge (e.g. `+`, `-k`) inside a toggle-row
 - `.not-toggle` — NOT invert pill button; `.active` = cyan highlight
 - `.proto-clear-btn` — inline × next to protocol select; `.active` = visible

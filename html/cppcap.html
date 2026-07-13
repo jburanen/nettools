@@ -28,7 +28,7 @@
 
     <div class="tool-view" id="tool-cppcap">
       <div class="tool-header">
-        <h1 class="tool-title">cppcap Builder<span class="tool-version">v0.1.0</span> <span class="wip-badge">Under Construction</span></h1>
+        <h1 class="tool-title">cppcap Builder<span class="tool-version">v0.2.0</span> <span class="wip-badge">Under Construction</span></h1>
         <p class="tool-desc">Build Check Point <code style="color:var(--cyan);font-size:inherit">cppcap</code> capture commands (sk141412). A tcpdump-style capture tool with lower CPU load that also sees SecureXL-accelerated traffic. Built-in from R80.40; run from Expert mode.</p>
       </div>
 
@@ -57,7 +57,7 @@
           <div class="input-group">
             <div class="field-label-row">
               <label class="field-label" for="iface">Interface (-i)</label>
-              <button type="button" class="not-toggle" id="ifaceExclude" aria-pressed="false">EXCLUDE</button>
+              <button type="button" class="not-toggle" id="ifaceExclude" aria-pressed="false">NOT</button>
             </div>
             <input
               type="text"
@@ -78,7 +78,7 @@
               <option value="bond0">
               <option value="bond1">
             </datalist>
-            <div class="input-hint">EXCLUDE captures on all interfaces except this one (-I)</div>
+            <div class="input-hint">NOT captures on all interfaces except this one (-I)</div>
             <div class="field-msg" id="ifaceMsg"></div>
           </div>
 
@@ -104,9 +104,6 @@
               <div class="input-hint"><span class="hint-val" id="fillFullFrame">0 = capture full frame</span></div>
               <div class="field-msg" id="snaplenMsg"></div>
             </div>
-          </div>
-
-          <div class="tcpdump-row">
             <div class="input-group">
               <label class="field-label" for="optFrameLimit">Stop after Frames (-p)</label>
               <input
@@ -189,7 +186,7 @@
           <div class="panel-label">// screen output options</div>
           <div class="input-hint">These flags only affect on-screen output — they are omitted from the command while an output file (-o) is set.</div>
 
-          <div class="option-toggles" style="margin-top:14px;padding-top:0;border-top:none;">
+          <div class="option-toggles two-col" style="margin-top:14px;padding-top:0;border-top:none;">
             <label class="toggle-row">
               <input type="checkbox" id="optL2" class="toggle-check" />
               <span class="toggle-label">
@@ -269,7 +266,10 @@
           <div class="input-hint">cppcap uses standard pcap-filter (BPF) syntax, the same as tcpdump.</div>
 
           <div class="input-group" style="margin-top:14px">
-            <label class="field-label" for="proto">Protocol</label>
+            <div class="field-label-row">
+              <label class="field-label" for="proto">Protocol</label>
+              <button type="button" class="not-toggle" id="protoNot" aria-pressed="false">NOT</button>
+            </div>
             <select id="proto" class="mono-input filter-proto">
               <option value="">any</option>
               <option value="tcp">tcp</option>
@@ -286,7 +286,10 @@
             <div class="filter-section">
               <div class="filter-section-label">SOURCE</div>
               <div class="input-group">
-                <label class="field-label" for="srcHost">Host / IP</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="srcHost">Host / IP</label>
+                  <button type="button" class="not-toggle" id="srcHostNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="srcHost"
@@ -298,7 +301,10 @@
                 <div class="field-msg" id="srcHostMsg"></div>
               </div>
               <div class="input-group">
-                <label class="field-label" for="srcPort">Port</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="srcPort">Port</label>
+                  <button type="button" class="not-toggle" id="srcPortNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="srcPort"
@@ -314,7 +320,10 @@
             <div class="filter-section">
               <div class="filter-section-label">DESTINATION</div>
               <div class="input-group">
-                <label class="field-label" for="dstHost">Host / IP</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="dstHost">Host / IP</label>
+                  <button type="button" class="not-toggle" id="dstHostNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="dstHost"
@@ -326,7 +335,10 @@
                 <div class="field-msg" id="dstHostMsg"></div>
               </div>
               <div class="input-group">
-                <label class="field-label" for="dstPort">Port</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="dstPort">Port</label>
+                  <button type="button" class="not-toggle" id="dstPortNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="dstPort"
@@ -342,7 +354,10 @@
             <div class="filter-section">
               <div class="filter-section-label">EITHER DIRECTION</div>
               <div class="input-group">
-                <label class="field-label" for="host">Host / IP</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="host">Host / IP</label>
+                  <button type="button" class="not-toggle" id="hostNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="host"
@@ -354,7 +369,10 @@
                 <div class="field-msg" id="hostMsg"></div>
               </div>
               <div class="input-group">
-                <label class="field-label" for="port">Port</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="port">Port</label>
+                  <button type="button" class="not-toggle" id="portNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="port"

@@ -576,6 +576,13 @@ select.mono-input option { background: var(--bg-raised); }
   border-top: 1px solid var(--border);
 }
 
+/* Two-column variant for longer toggle lists; collapses on mobile */
+.option-toggles.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+
 .toggle-row {
   display: flex;
   align-items: center;
@@ -871,6 +878,7 @@ details.collapsible-section > .collapsible-body {
   .tcpdump-row   { flex-direction: column; }
   .filter-grid   { grid-template-columns: 1fr; }
   .filter-proto  { max-width: 100%; }
+  .option-toggles.two-col { grid-template-columns: 1fr; }
 }
 
 /* --- Home Tool Cards -------------------------------------- */

@@ -36,6 +36,14 @@ const hostInput       = $('host');
 const portInput       = $('port');
 const extraFilter     = $('extraFilter');
 
+const protoNot   = $('protoNot');
+const srcHostNot = $('srcHostNot');
+const srcPortNot = $('srcPortNot');
+const dstHostNot = $('dstHostNot');
+const dstPortNot = $('dstPortNot');
+const hostNot    = $('hostNot');
+const portNot    = $('portNot');
+
 const cmdText      = $('cmdText');
 const cmdOutput    = document.querySelector('.cmd-output');
 const copyBtn      = $('copyBtn');
@@ -190,6 +198,11 @@ function parseIfaceInput(raw, excludeActive) {
   return { valid: true, value: s };
 }
 
+// Prefixes a BPF primitive with `not` when its NOT pill is active.
+function withNot(primitive, notEl) {
+  return notEl.classList.contains('active') ? `not ${primitive}` : primitive;
+}
+
 // ── Field message display ─────────────────────────────────────
 
 function setFieldMsg(inputEl, msgId, result) {
@@ -314,14 +327,14 @@ function buildCommand() {
   const fp = [];
 
   const proto = protoSelect.value;
-  if (proto) fp.push(proto);
+  if (proto) fp.push(withNot(proto, protoNot));
 
-  if (srcHostR.valid && srcHostR.value) fp.push(`src ${srcHostR.filterKey} ${srcHostR.value}`);
-  if (srcPortR.valid && srcPortR.value) fp.push(`src port ${srcPortR.value}`);
-  if (dstHostR.valid && dstHostR.value) fp.push(`dst ${dstHostR.filterKey} ${dstHostR.value}`);
-  if (dstPortR.valid && dstPortR.value) fp.push(`dst port ${dstPortR.value}`);
-  if (hostR.valid    && hostR.value)    fp.push(`${hostR.filterKey} ${hostR.value}`);
-  if (portR.valid    && portR.value)    fp.push(`port ${portR.value}`);
+  if (srcHostR.valid && srcHostR.value) fp.push(withNot(`src ${srcHostR.filterKey} ${srcHostR.value}`, srcHostNot));
+  if (srcPortR.valid && srcPortR.value) fp.push(withNot(`src port ${srcPortR.value}`, srcPortNot));
+  if (dstHostR.valid && dstHostR.value) fp.push(withNot(`dst ${dstHostR.filterKey} ${dstHostR.value}`, dstHostNot));
+  if (dstPortR.valid && dstPortR.value) fp.push(withNot(`dst port ${dstPortR.value}`, dstPortNot));
+  if (hostR.valid    && hostR.value)    fp.push(withNot(`${hostR.filterKey} ${hostR.value}`, hostNot));
+  if (portR.valid    && portR.value)    fp.push(withNot(`port ${portR.value}`, portNot));
 
   const extra = extraFilter.value.trim();
   if (extra) fp.push(extra);
@@ -392,12 +405,21 @@ allInputs.forEach(el => {
   el.addEventListener('change', updateCommand);
 });
 
-// ── Interface exclude (-I) toggle ─────────────────────────────
+// ── NOT toggles (interface -I + filter negation) ──────────────
 
-ifaceExclude.addEventListener('click', () => {
-  const active = ifaceExclude.classList.toggle('active');
-  ifaceExclude.setAttribute('aria-pressed', String(active));
-  updateCommand();
+const allNotToggles = [
+  ifaceExclude,
+  protoNot,
+  srcHostNot, srcPortNot,
+  dstHostNot, dstPortNot,
+  hostNot, portNot,
+];
+allNotToggles.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const active = btn.classList.toggle('active');
+    btn.setAttribute('aria-pressed', String(active));
+    updateCommand();
+  });
 });
 
 // ── Manual copy ───────────────────────────────────────────────
