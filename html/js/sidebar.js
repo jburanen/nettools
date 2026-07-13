@@ -45,7 +45,6 @@
     <a href="cppcap.html" class="nav-item" data-tool="cppcap">
       <span class="nav-icon">⬡</span>
       <span class="nav-label">cppcap</span>
-      <span class="wip-badge">WIP</span>
     </a>
     <div class="nav-item disabled" title="Coming soon">
       <span class="nav-icon">⬡</span>

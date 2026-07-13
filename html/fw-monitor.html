@@ -28,7 +28,7 @@
 
     <div class="tool-view" id="tool-fw-monitor">
       <div class="tool-header">
-        <h1 class="tool-title">fw monitor Builder<span class="tool-version">v0.4.0</span></h1>
+        <h1 class="tool-title">fw monitor Builder<span class="tool-version">v0.4.1</span></h1>
         <p class="tool-desc">Build Check Point <code style="color:var(--cyan);font-size:inherit">fw monitor</code> capture commands. Packets are intercepted at kernel inspection points before and after the security policy — a packet that disappears between points was dropped at that stage.</p>
       </div>
 
@@ -97,8 +97,9 @@
         </section>
 
         <!-- Inspection Points -->
-        <section class="panel input-panel">
-          <div class="panel-label">// inspection points (-m)</div>
+        <details class="panel input-panel collapsible-panel">
+          <summary>// inspection points (-m)</summary>
+          <div class="collapsible-body">
           <div class="input-hint">fw monitor intercepts packets at four kernel checkpoints. Enable the points you need — a packet that disappears between points was dropped at that stage of processing.</div>
 
           <div class="option-toggles" style="margin-top:14px;padding-top:0;border-top:none;">
@@ -132,7 +133,8 @@
             </label>
           </div>
           <div class="field-msg" id="maskMsg" style="margin-top:10px"></div>
-        </section>
+          </div>
+        </details>
 
         <!-- Filter Expression -->
         <section class="panel input-panel">
