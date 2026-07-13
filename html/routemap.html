@@ -28,7 +28,7 @@
 
     <div class="tool-view tool-view--wide" id="tool-routemap">
       <div class="tool-header">
-        <h1 class="tool-title">Route-Map Builder<span class="tool-version">v0.4.2</span> <span class="wip-badge">Under Construction</span></h1>
+        <h1 class="tool-title">Route-Map Builder<span class="tool-version">v0.5.0</span> <span class="wip-badge">Under Construction</span></h1>
         <p class="tool-desc">Build a route-map policy from source protocol match/set clauses and export it as Check Point Gaia, Cisco IOS, or Brocade/Ruckus/ICX config. Optionally paste an existing route-map to keep new sequence numbers from colliding with entries already in use.</p>
       </div>
 
@@ -55,10 +55,28 @@
           <div class="rm-vendor-note">Command keywords follow common vendor conventions — verify against your platform's routing CLI reference before deploying.</div>
         </section>
 
-        <!-- Route-map name + existing route-map paste -->
+        <!-- Existing route-map paste -->
+        <details class="panel input-panel collapsible-panel" open>
+          <summary>// paste existing route-map</summary>
+          <div class="collapsible-body">
+            <div class="input-hint" style="margin-bottom:8px">Paste a route-map from Gaia, Cisco IOS, or Brocade/Ruckus/ICX. Its entries are imported into the entries table below, where you can modify or delete them. The generated output contains only your changes: new entries, modified entries (deleted and re-created), and delete commands.</div>
+            <textarea
+              id="pasteText"
+              class="mono-input compose-input"
+              style="min-height:120px"
+              placeholder="set routemap RM-BGP-IN id 10 on&#10;set routemap RM-BGP-IN id 10 allow&#10;set routemap RM-BGP-IN id 10 match protocol static&#10;... or Cisco-style: route-map RM-BGP-IN permit 10"
+              autocomplete="off"
+              spellcheck="false"
+            ></textarea>
+            <div class="input-hint" id="pasteInfo" style="margin-top:8px; white-space:pre-line"></div>
+          </div>
+        </details>
+
+        <!-- Entries -->
         <section class="panel input-panel">
-          <div class="panel-label">// route-map</div>
-          <div class="input-group" style="margin-bottom:0">
+          <div class="panel-label">// entries</div>
+
+          <div class="input-group">
             <label class="field-label" for="rmName">Route-map name</label>
             <input
               type="text"
@@ -70,27 +88,6 @@
             />
             <div class="field-msg" id="rmNameMsg"></div>
           </div>
-
-          <details class="collapsible-section">
-            <summary>PASTE EXISTING ROUTE-MAP (imports its entries into the table below for editing and delete-command generation)</summary>
-            <div class="collapsible-body">
-              <div class="input-hint" style="margin-bottom:8px">Paste a route-map from Gaia, Cisco IOS, or Brocade/Ruckus/ICX. Its entries are imported into the entries table below, where you can modify or delete them. The generated output contains only your changes: new entries, modified entries (deleted and re-created), and delete commands.</div>
-              <textarea
-                id="pasteText"
-                class="mono-input compose-input"
-                style="min-height:120px"
-                placeholder="set routemap RM-BGP-IN id 10 on&#10;set routemap RM-BGP-IN id 10 allow&#10;set routemap RM-BGP-IN id 10 match protocol static&#10;... or Cisco-style: route-map RM-BGP-IN permit 10"
-                autocomplete="off"
-                spellcheck="false"
-              ></textarea>
-              <div class="input-hint" id="pasteInfo" style="margin-top:8px; white-space:pre-line"></div>
-            </div>
-          </details>
-        </section>
-
-        <!-- Entries -->
-        <section class="panel input-panel">
-          <div class="panel-label">// entries</div>
 
           <div class="subnets-table-wrap">
             <table class="subnets-table">
@@ -134,15 +131,13 @@
                     <option value="deny">deny (Gaia: restrict)</option>
                   </select>
                 </div>
-                <div class="input-group">
-                  <label class="toggle-row" style="margin-bottom:9px">
+                <div class="input-group rm-enabled-group">
+                  <span class="field-label" aria-hidden="true">&nbsp;</span>
+                  <label class="toggle-row">
                     <input type="checkbox" id="entryEnabled" class="toggle-check" checked />
                     <span class="toggle-label">Enabled</span>
                   </label>
                   <div class="input-hint" style="margin-top:0">Unchecked → Gaia emits <code style="color:var(--cyan)">off</code>; Cisco/Brocade omit the entry (no disable state)</div>
-                </div>
-                <div class="input-group">
-                  <span class="hint-val" id="suggestSeq"></span>
                 </div>
               </div>
 

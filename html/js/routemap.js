@@ -45,7 +45,6 @@ const entryEmpty     = $('entryEmpty');
 
 const entrySeqInput   = $('entrySeq');
 const entrySeqMsg     = 'entrySeqMsg';
-const suggestSeqLink  = $('suggestSeq');
 const entryActionSel  = $('entryAction');
 const entryEnabled    = $('entryEnabled');
 
@@ -947,7 +946,6 @@ function updateAll() {
   updatePasteInfo();
   renderEntryList();
   updateOutput();
-  suggestSeqLink.textContent = `use suggested (${suggestNextSeq(editingId)})`;
 }
 
 // ── Manual copy ───────────────────────────────────────────────
@@ -1003,11 +1001,6 @@ addEntryBtn.addEventListener('click', () => {
 cancelEditBtn.addEventListener('click', () => {
   resetEntryForm();
   updateAll();
-});
-
-suggestSeqLink.addEventListener('click', () => {
-  entrySeqInput.value = String(suggestNextSeq(editingId));
-  readEntryForm();
 });
 
 // ── Live validation while typing ─────────────────────────────

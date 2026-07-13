@@ -1132,7 +1132,7 @@ details.collapsible-panel[open] > summary { margin-bottom: 18px; }
 
 .rm-seq-row {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 16px;
   flex-wrap: wrap;
 }
@@ -1146,7 +1146,8 @@ details.collapsible-panel[open] > summary { margin-bottom: 18px; }
 .rm-adv-count:empty { display: none; }
 
 .rm-seq-row .input-group { margin-bottom: 0; }
-.rm-seq-row .hint-val { padding-bottom: 9px; display: inline-block; }
+/* Vertically center the Enabled toggle against the input row (input = font line + 20px padding + 2px border) */
+.rm-enabled-group .toggle-row { min-height: calc(var(--fs-body) * 1.2 + 22px); }
 
 /* --- Scrollbar -------------------------------------------- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
