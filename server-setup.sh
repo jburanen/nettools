@@ -5,7 +5,7 @@
 #
 # What this does:
 #   1. Installs git, docker, docker-compose (if missing)
-#   2. Clones the GitHub repo to /opt/nettools
+#   2. Clones the GitHub repo to /opt/syntax
 #   3. Installs the 'webhook' daemon to listen for GitHub pushes
 #   4. Creates a deploy script that pulls + restarts docker
 #   5. Wires everything up with systemd
@@ -19,8 +19,8 @@ set -euo pipefail
 
 # ── CONFIG — edit these ──────────────────────────────────────
 GITHUB_USER="YOUR_GITHUB_USERNAME"
-GITHUB_REPO="nettools"
-DEPLOY_PATH="/opt/nettools"
+GITHUB_REPO="SYNtax"
+DEPLOY_PATH="/opt/syntax"
 DEPLOY_USER="${USER}"                 # the non-root user who owns the files
 WEBHOOK_PORT="9000"
 WEBHOOK_SECRET="CHANGE_THIS_TO_A_LONG_RANDOM_SECRET"
@@ -67,13 +67,13 @@ else
 fi
 
 # ── 3. Deploy script ──────────────────────────────────────────
-info "Writing /usr/local/bin/nettools-deploy..."
-sudo tee /usr/local/bin/nettools-deploy > /dev/null << DEPLOY_SCRIPT
+info "Writing /usr/local/bin/syntax-deploy..."
+sudo tee /usr/local/bin/syntax-deploy > /dev/null << DEPLOY_SCRIPT
 #!/usr/bin/env bash
-# nettools-deploy — pull latest from GitHub and restart containers
+# syntax-deploy — pull latest from GitHub and restart containers
 set -euo pipefail
 DEPLOY_PATH="$DEPLOY_PATH"
-LOG="/var/log/nettools-deploy.log"
+LOG="/var/log/syntax-deploy.log"
 
 echo "[\$(date '+%Y-%m-%d %H:%M:%S')] Deploy triggered" >> "\$LOG"
 
@@ -84,10 +84,10 @@ git fetch origin main
 git reset --hard origin/main
 echo "[\$(date '+%Y-%m-%d %H:%M:%S')] Git pull complete" >> "\$LOG"
 
-# Restart only the nettools container (adjust service name if needed)
+# Restart only the syntax container (adjust service name if needed)
 # Using the parent compose file one level up if it exists, otherwise local
 if [ -f "/opt/docker-compose.yml" ]; then
-    docker compose -f /opt/docker-compose.yml up -d --build nettools
+    docker compose -f /opt/docker-compose.yml up -d --build syntax
 else
     docker compose up -d --build
 fi
@@ -95,14 +95,14 @@ fi
 echo "[\$(date '+%Y-%m-%d %H:%M:%S')] Deploy complete" >> "\$LOG"
 DEPLOY_SCRIPT
 
-sudo chmod +x /usr/local/bin/nettools-deploy
+sudo chmod +x /usr/local/bin/syntax-deploy
 ok "Deploy script written"
 
 # Allow DEPLOY_USER to run deploy without password (needed by webhook daemon)
-SUDOERS_LINE="$DEPLOY_USER ALL=(ALL) NOPASSWD: /usr/local/bin/nettools-deploy"
-if ! sudo grep -qF "$SUDOERS_LINE" /etc/sudoers.d/nettools 2>/dev/null; then
-    echo "$SUDOERS_LINE" | sudo tee /etc/sudoers.d/nettools > /dev/null
-    sudo chmod 440 /etc/sudoers.d/nettools
+SUDOERS_LINE="$DEPLOY_USER ALL=(ALL) NOPASSWD: /usr/local/bin/syntax-deploy"
+if ! sudo grep -qF "$SUDOERS_LINE" /etc/sudoers.d/syntax 2>/dev/null; then
+    echo "$SUDOERS_LINE" | sudo tee /etc/sudoers.d/syntax > /dev/null
+    sudo chmod 440 /etc/sudoers.d/syntax
     ok "Sudoers entry added for passwordless deploy"
 fi
 
@@ -112,8 +112,8 @@ sudo mkdir -p /etc/webhook
 sudo tee /etc/webhook/hooks.json > /dev/null << WEBHOOK_JSON
 [
   {
-    "id": "nettools-deploy",
-    "execute-command": "/usr/local/bin/nettools-deploy",
+    "id": "syntax-deploy",
+    "execute-command": "/usr/local/bin/syntax-deploy",
     "command-working-directory": "$DEPLOY_PATH",
     "response-message": "Deploy triggered.",
     "trigger-rule": {
@@ -149,7 +149,7 @@ ok "Webhook config written to /etc/webhook/hooks.json"
 info "Writing systemd service for webhook daemon..."
 sudo tee /etc/systemd/system/webhook.service > /dev/null << SYSTEMD_UNIT
 [Unit]
-Description=GitHub Webhook Listener (nettools)
+Description=GitHub Webhook Listener (syntax)
 After=network.target
 
 [Service]
@@ -186,14 +186,14 @@ echo -e "${GREEN}  Server setup complete!${NC}"
 echo -e "${GREEN}============================================${NC}"
 echo ""
 echo "  Deploy path   : $DEPLOY_PATH"
-echo "  Webhook URL   : http://$(hostname -I | awk '{print $1}'):$WEBHOOK_PORT/hooks/nettools-deploy"
+echo "  Webhook URL   : http://$(hostname -I | awk '{print $1}'):$WEBHOOK_PORT/hooks/syntax-deploy"
 echo "  Webhook secret: $WEBHOOK_SECRET"
-echo "  Deploy log    : /var/log/nettools-deploy.log"
+echo "  Deploy log    : /var/log/syntax-deploy.log"
 echo ""
 echo "  Next: add the webhook to GitHub (see docs/SETUP.md)"
 echo ""
 echo -e "${CYAN}  To test the deploy manually:${NC}"
-echo "    /usr/local/bin/nettools-deploy"
+echo "    /usr/local/bin/syntax-deploy"
 echo ""
 echo -e "${CYAN}  To watch webhook logs:${NC}"
 echo "    journalctl -fu webhook"

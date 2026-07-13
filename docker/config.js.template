@@ -1,6 +1,6 @@
 'use strict';
 /* ============================================================
-   NetTools — generated runtime config
+   SYNtax — generated runtime config
    Rendered from this template at container startup by
    docker/40-nettools-config.sh (envsubst). Served at
    /generated/config.js and loaded BEFORE js/sidebar.js.
@@ -19,10 +19,10 @@ window.NETTOOLS_CONFIG = {
 (function () {
   var c = window.NETTOOLS_CONFIG;
 
-  // Swap the "NetTools" brand prefix in the browser-tab title,
+  // Swap the "SYNtax" brand prefix in the browser-tab title,
   // preserving each page's own "— Tool Name" suffix.
   if (c.tabTitle) {
-    document.title = document.title.replace(/^NetTools/, c.tabTitle);
+    document.title = document.title.replace(/^SYNtax/, c.tabTitle);
   }
 
   // Normalize DISABLED_MODULES ("a, b,c") into a slug array. Slugs are the

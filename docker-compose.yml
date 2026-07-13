@@ -1,5 +1,5 @@
 # docker-compose.yml
-# NetTools — browser-local network utilities served via nginx
+# SYNtax — browser-local network utilities served via nginx
 
 # If changes are made on the web server, commit and push them to the repo:
 # cd <docker projeect directory>
@@ -19,19 +19,19 @@ services:
     build:
       context: ./proxy
       dockerfile: Dockerfile
-    image: nettools-mqtt-proxy:latest
+    image: syntax-mqtt-proxy:latest
     container_name: mqtt-proxy
     restart: unless-stopped
 
-  nettools:
+  syntax:
     build:
       context: .
       dockerfile: Dockerfile
-    image: nettools:latest
-    # Override with CONTAINER_NAME in .env. Default: nettools
+    image: syntax:latest
+    # Override with CONTAINER_NAME in .env. Default: syntax
     # (the runtime container name; the service key above is static
     #  because Compose can't substitute env vars into service keys.)
-    container_name: ${CONTAINER_NAME:-nettools}
+    container_name: ${CONTAINER_NAME:-syntax}
     restart: unless-stopped
     # Optional theming — values come from an (optional) .env file in
     # this directory. Anything unset arrives empty and the container's

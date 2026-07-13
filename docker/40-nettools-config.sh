@@ -1,6 +1,6 @@
 #!/bin/sh
 # ============================================================
-# NetTools — render themeable config at container startup.
+# SYNtax — render themeable config at container startup.
 #
 # The nginx base image runs every executable in
 # /docker-entrypoint.d/ before starting nginx. This script
@@ -59,4 +59,4 @@ JS_VARS='$LOGO_TEXT $LOGO_ACCENT $LOGO_SUB $LOGO_LINK $TAB_TITLE $DISABLED_MODUL
 envsubst "$CSS_VARS" < "$TPL/theme.css.template" > "$GEN/theme.css"
 envsubst "$JS_VARS"  < "$TPL/config.js.template" > "$GEN/config.js"
 
-echo "[nettools] rendered theme.css and config.js from .env"
+echo "[syntax] rendered theme.css and config.js from .env"

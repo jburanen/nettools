@@ -1,4 +1,6 @@
-# NetTools
+# SYNtax
+
+*// check your syntax*
 
 Modular collection of web-based tools hosted in Docker+Nginx. Most computation is pure client-side JavaScript. Can be public-facing or hosted internally for simple quick access. Designed to be hosted behind a reverse proxy such as <a href=https://github.com/NginxProxyManager/nginx-proxy-manager>NPM</a> if it is made publically available.
 
@@ -50,7 +52,7 @@ and does not parse MQTT itself.
 ## Directory Structure
 
 ```
-nettools/
+syntax/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .env.example            # optional theming / branding / module toggles (copy to .env)
@@ -70,6 +72,7 @@ nettools/
     ├── tcpdump.html
     ├── fw-monitor.html
     ├── fw-zdebug.html
+    ├── cppcap.html
     ├── compose-converter.html
     ├── mqtt.html
     ├── routemap.html
@@ -82,6 +85,8 @@ nettools/
         ├── tcpdump.js          # tcpdump command builder
         ├── fw-monitor.js       # fw monitor command builder
         ├── fw-zdebug.js        # fw ctl zdebug command builder
+        ├── cppcap.js           # cppcap command builder
+        ├── routemap.js         # route-map builder
         ├── compose-converter.js
         └── mqtt-client.js
 ```
@@ -90,7 +95,7 @@ nettools/
 
 ## Docker Setup
 
-By default the container is named `nettools` and joins an external Docker network called `proxy_net` (expected to be created by a reverse proxy stack, e.g. Nginx Proxy Manager or Traefik). Both are overridable in `.env` via `CONTAINER_NAME` and `DOCKER_NETWORK` (see [Configuration](#configuration)).
+By default the container is named `syntax` and joins an external Docker network called `proxy_net` (expected to be created by a reverse proxy stack, e.g. Nginx Proxy Manager or Traefik). Both are overridable in `.env` via `CONTAINER_NAME` and `DOCKER_NETWORK` (see [Configuration](#configuration)).
 
 ```yaml
 networks:
@@ -111,7 +116,7 @@ The `html/` directory and `nginx/default.conf` are bind-mounted read-only into t
 
 1. Installs git, Docker, and the `webhook` daemon
 2. Clones the repo to the location you specify
-3. Writes a deploy script (`/usr/local/bin/nettools-deploy`) that pulls from GitHub and restarts the container
+3. Writes a deploy script (`/usr/local/bin/syntax-deploy`) that pulls from GitHub and restarts the container
 4. Configures a systemd service for the webhook listener
 5. Opens the webhook port in ufw
 
@@ -142,7 +147,7 @@ unset variable and renders two files with `envsubst` —
 `/generated/…` and loaded by every page. Anything you don't set keeps its
 built-in default, so an empty or absent `.env` changes nothing.
 
-**Deployment** — `CONTAINER_NAME` (default `nettools`) and `DOCKER_NETWORK`
+**Deployment** — `CONTAINER_NAME` (default `syntax`) and `DOCKER_NETWORK`
 (default `proxy_net`). These are read by Compose itself, so `docker compose up -d`
 applies them without a rebuild.
 
@@ -158,7 +163,7 @@ fine-tune individual roles).
 **Modules** — `DISABLED_MODULES` is a comma-separated list of tools to turn
 off; all are enabled by default. A disabled tool is removed from the sidebar
 and home grid, and visiting its page directly redirects home. Valid slugs:
-`subnet, tcpdump, fw-monitor, fw-zdebug, compose-converter, mqtt, routemap`.
+`subnet, tcpdump, fw-monitor, fw-zdebug, cppcap, compose-converter, mqtt, routemap`.
 
 ```ini
 # example .env
@@ -214,6 +219,14 @@ See `.env.example` for the full, commented list of every variable and its defaul
 - NOT-invert toggles on grep filters, CIDR-to-regex translation, optional capture-to-file (`tee`)
 - Collapsible VSX, stop/filter, advanced-flag, and capture sections
 
+### cppcap Builder
+
+- Live command preview with auto-copy for Check Point `cppcap` (sk141412) — tcpdump-style captures with lower CPU load that include SecureXL-accelerated traffic
+- Interface (`-i`) with NOT pill for exclude mode (`-I`), direction (`-d`), frame/byte/snaplen limits (`-p`/`-b`/`-c`)
+- Output file (`-o`) with size-based rotation (`-w`/`-W`) and cross-field validation
+- Screen-only verbose flags (`-D`/`-N`/`-T`/`-P`/`-Q`), automatically omitted while writing to a file
+- VSX targeting (`-v`/`-V`) and a BPF filter builder with per-field NOT negation
+
 ### Compose Converter
 
 - Paste a `docker run` command to get a `docker-compose.yml`, or paste a compose file to get `docker run` command(s)
@@ -233,7 +246,6 @@ See `.env.example` for the full, commented list of every variable and its defaul
 
 ### Planned modules - coming in two weeks </inside joke>
 
-- cppcap Builder
 - IKE debug Builder
 - Route-based VPN Configurator
 - Skyline config builder

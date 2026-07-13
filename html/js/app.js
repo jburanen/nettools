@@ -1,5 +1,5 @@
 /**
- * app.js — NetTools UI controller
+ * app.js — SYNtax UI controller
  * Wires DOM interactions to the Subnet library.
  * All computation is local; no network requests.
  */

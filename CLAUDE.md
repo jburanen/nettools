@@ -1,4 +1,4 @@
-# NetTools — CLAUDE.md
+# SYNtax — CLAUDE.md
 
 Vanilla JS network toolkit. No build system, no framework, no npm in the frontend. Most computation runs client-side. Served by nginx in Docker, should be behind a reverse proxy if published on the internet.
 
@@ -16,6 +16,7 @@ html/                  # Web root (nginx bind-mount)
     tcpdump.js         # tcpdump builder
     fw-monitor.js      # fw monitor builder
     fw-zdebug.js       # fw ctl zdebug builder
+    cppcap.js          # cppcap builder
     routemap.js        # multi-vendor route-map builder (imports pasted route-maps, outputs a change script)
     compose-converter.js
     mqtt-client.js
@@ -244,7 +245,7 @@ into static assets **at container startup**:
   loaded after `main.css` so it wins. `config.js` sets `window.NETTOOLS_CONFIG`
   (`logoText`/`logoAccent` → the two sidebar logo spans, `logoSub` → the
   muted subtitle line, `logoLink` → the logo anchor's `href` (default
-  `index.html`), all via `sidebar.js`; `tabTitle` → swaps the "NetTools"
+  `index.html`), all via `sidebar.js`; `tabTitle` → swaps the "SYNtax"
   prefix in each page's `<title>`). These brand vars default to empty, so page
   text is left as-authored unless set.
 - Vars: `LOGO_TEXT`, `LOGO_ACCENT`, `LOGO_SUB`, `LOGO_LINK`, `TAB_TITLE`, `COLOR_PRIMARY/WARNING/ERROR/BG/INPUT_BG/BORDER`,
@@ -254,7 +255,7 @@ into static assets **at container startup**:
   direct visit to a disabled tool page back to `index.html`; `sidebar.js` removes the
   disabled `.nav-item`s (and any section header left empty). A new tool is enabled
   automatically — no list to maintain.
-- `CONTAINER_NAME` (default `nettools`) and `DOCKER_NETWORK` (default `proxy_net`) are
+- `CONTAINER_NAME` (default `syntax`) and `DOCKER_NETWORK` (default `proxy_net`) are
   different: they're substituted by **docker-compose itself** (`${VAR:-default}` in
   `docker-compose.yml`), not rendered by the entrypoint. Don't add them to the
   `environment:` block or the templates.
