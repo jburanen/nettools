@@ -4,7 +4,14 @@
    Font:  JetBrains Mono throughout
    ============================================================ */
 
-/* --- Tokens ------------------------------------------------ */
+/* --- Tokens ------------------------------------------------
+   ⚠ When served from Docker, /generated/theme.css loads AFTER
+   this file and re-declares the themeable tokens (colors,
+   --input-bg, --font, and every --fs-*) from .env — editing
+   them here has NO effect in the container. You MUST control
+   those via .env; their defaults live in
+   docker/40-nettools-config.sh and must mirror this block.
+   The values below only apply when running without Docker. */
 :root {
   --bg-base:       #0b0e14;
   --bg-surface:    #111620;
@@ -34,7 +41,8 @@
 
   --font: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
-  /* Text-size roles — overridable via .env (see /generated/theme.css).
+  /* Text-size roles — in Docker these MUST be set via .env
+     (TEXT_*_SIZE vars); /generated/theme.css overrides them.
      --fs-base drives the root font-size, so it scales all rem-based
      text; the role tokens below fine-tune individual text roles. */
   --fs-base:  14px;
