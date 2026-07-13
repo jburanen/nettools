@@ -666,6 +666,29 @@ details.collapsible-section > .collapsible-body {
   padding-top: 10px;
 }
 
+/* Boxed collapsible — combine with .panel/.input-panel so collapsed
+   sections keep the same bordered box and `// label` header as
+   non-collapsible panels (cppcap output file / screen output / vsx) */
+details.collapsible-panel > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
+}
+details.collapsible-panel > summary::-webkit-details-marker { display: none; }
+details.collapsible-panel > summary::before {
+  content: '▶';
+  font-size: 0.5rem;
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+details.collapsible-panel[open] > summary::before { transform: rotate(90deg); }
+details.collapsible-panel[open] > summary { margin-bottom: 18px; }
+
 /* ── Input clear buttons ──────────────────────────────────── */
 .input-wrap {
   position: relative;

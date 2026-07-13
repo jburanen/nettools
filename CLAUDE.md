@@ -177,7 +177,8 @@ values and is loaded after `main.css`, so it wins. See Theming below.
 - `.filter-reset-btn` — "reset all" text button
 
 **Collapsibles**
-- `<details class="collapsible-section">` / `<summary>` — collapsed by default (no `open` attr)
+- `<details class="collapsible-section">` / `<summary>` — collapsed by default (no `open` attr); inline style used by fw-zdebug
+- `<details class="panel input-panel collapsible-panel">` — boxed variant (cppcap): keeps the `.panel` border/box and styles the `<summary>` like a `.panel-label` (`// label` text, caret prefix), so collapsed sections match non-collapsible panels
 - `.collapsible-body` — padding wrapper for content inside details
 
 **Buttons**

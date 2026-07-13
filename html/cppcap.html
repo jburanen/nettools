@@ -28,7 +28,7 @@
 
     <div class="tool-view" id="tool-cppcap">
       <div class="tool-header">
-        <h1 class="tool-title">cppcap Builder<span class="tool-version">v0.2.1</span> <span class="wip-badge">Under Construction</span></h1>
+        <h1 class="tool-title">cppcap Builder<span class="tool-version">v0.2.2</span> <span class="wip-badge">Under Construction</span></h1>
         <p class="tool-desc">Build Check Point <code style="color:var(--cyan);font-size:inherit">cppcap</code> capture commands (sk141412). A tcpdump-style capture tool with lower CPU load that also sees SecureXL-accelerated traffic. Built-in from R80.40; run from Expert mode.</p>
       </div>
 
@@ -132,8 +132,8 @@
         </section>
 
         <!-- Output File -->
-        <details class="collapsible-section">
-          <summary>OUTPUT FILE</summary>
+        <details class="panel input-panel collapsible-panel">
+          <summary>// output file</summary>
           <div class="collapsible-body">
             <div class="input-group">
               <label class="field-label" for="optOutput">Output File (-o)</label>
@@ -183,8 +183,9 @@
         </details>
 
         <!-- Screen Output Options -->
-        <section class="panel input-panel">
-          <div class="panel-label">// screen output options</div>
+        <details class="panel input-panel collapsible-panel">
+          <summary>// screen output options</summary>
+          <div class="collapsible-body">
           <div class="input-hint">These flags only affect on-screen output — they are omitted from the command while an output file (-o) is set.</div>
 
           <div class="option-toggles two-col" style="margin-top:14px;padding-top:0;border-top:none;">
@@ -225,11 +226,12 @@
             </label>
           </div>
           <div class="field-msg" id="displayMsg" style="margin-top:10px"></div>
-        </section>
+          </div>
+        </details>
 
         <!-- VSX -->
-        <details class="collapsible-section">
-          <summary>VSX</summary>
+        <details class="panel input-panel collapsible-panel">
+          <summary>// vsx</summary>
           <div class="collapsible-body">
             <div class="tcpdump-row">
               <div class="input-group">
