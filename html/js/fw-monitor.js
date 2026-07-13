@@ -26,6 +26,14 @@ const dstPortInput = $('dstPort');
 const hostInput    = $('host');
 const portInput    = $('port');
 
+const protoNot   = $('protoNot');
+const srcHostNot = $('srcHostNot');
+const srcPortNot = $('srcPortNot');
+const dstHostNot = $('dstHostNot');
+const dstPortNot = $('dstPortNot');
+const hostNot    = $('hostNot');
+const portNot    = $('portNot');
+
 const cmdText      = $('cmdText');
 const cmdOutput    = document.querySelector('.cmd-output');
 const copyBtn      = $('copyBtn');
@@ -99,6 +107,15 @@ function parseHostInput(raw) {
     return { valid: false, error: 'Partial IP — use CIDR notation, e.g. 10.0.0.0/8' };
 
   return { valid: false, error: 'Enter a valid IPv4 address or CIDR range (e.g. 10.0.0.0/24)' };
+}
+
+// Negates a filter condition when its NOT pill is active. Conditions that are
+// already fully parenthesized (either-direction "or" groups) keep their parens;
+// everything else gets wrapped so `not` binds to the whole comparison.
+function withNot(condition, notEl) {
+  if (!notEl.classList.contains('active')) return condition;
+  const wrapped = condition.startsWith('(') && condition.endsWith(')');
+  return wrapped ? `not ${condition}` : `not (${condition})`;
 }
 
 // Builds a single fw monitor filter token for the given direction ('src' or 'dst').
@@ -205,28 +222,28 @@ function buildCommand() {
   const conditions = [];
 
   const proto = protoSelect.value;
-  if (proto) conditions.push(`proto=${proto}`);
+  if (proto) conditions.push(withNot(`proto=${proto}`, protoNot));
 
   const srcT = hostToken('src', srcHostR);
-  if (srcT) conditions.push(srcT);
+  if (srcT) conditions.push(withNot(srcT, srcHostNot));
 
-  if (srcPortR.valid && srcPortR.value) conditions.push(`sport=${srcPortR.value}`);
+  if (srcPortR.valid && srcPortR.value) conditions.push(withNot(`sport=${srcPortR.value}`, srcPortNot));
 
   const dstT = hostToken('dst', dstHostR);
-  if (dstT) conditions.push(dstT);
+  if (dstT) conditions.push(withNot(dstT, dstHostNot));
 
-  if (dstPortR.valid && dstPortR.value) conditions.push(`dport=${dstPortR.value}`);
+  if (dstPortR.valid && dstPortR.value) conditions.push(withNot(`dport=${dstPortR.value}`, dstPortNot));
 
   // Either direction host: expand to (src=X or dst=X)
   if (hostR.valid && hostR.type) {
     const ht_src = hostToken('src', hostR);
     const ht_dst = hostToken('dst', hostR);
-    conditions.push(`(${ht_src} or ${ht_dst})`);
+    conditions.push(withNot(`(${ht_src} or ${ht_dst})`, hostNot));
   }
 
   // Either direction port: expand to (sport=X or dport=X)
   if (portR.valid && portR.value) {
-    conditions.push(`(sport=${portR.value} or dport=${portR.value})`);
+    conditions.push(withNot(`(sport=${portR.value} or dport=${portR.value})`, portNot));
   }
 
   const filterBody = conditions.length > 0
@@ -292,6 +309,22 @@ const allInputs = [
 allInputs.forEach(el => {
   el.addEventListener('input', updateCommand);
   el.addEventListener('change', updateCommand);
+});
+
+// ── NOT toggles ───────────────────────────────────────────────
+
+const allNotToggles = [
+  protoNot,
+  srcHostNot, srcPortNot,
+  dstHostNot, dstPortNot,
+  hostNot, portNot,
+];
+allNotToggles.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const active = btn.classList.toggle('active');
+    btn.setAttribute('aria-pressed', String(active));
+    updateCommand();
+  });
 });
 
 // ── Manual copy ───────────────────────────────────────────────

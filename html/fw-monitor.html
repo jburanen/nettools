@@ -28,7 +28,7 @@
 
     <div class="tool-view" id="tool-fw-monitor">
       <div class="tool-header">
-        <h1 class="tool-title">fw monitor Builder<span class="tool-version">v0.3.2</span></h1>
+        <h1 class="tool-title">fw monitor Builder<span class="tool-version">v0.4.0</span></h1>
         <p class="tool-desc">Build Check Point <code style="color:var(--cyan);font-size:inherit">fw monitor</code> capture commands. Packets are intercepted at kernel inspection points before and after the security policy — a packet that disappears between points was dropped at that stage.</p>
       </div>
 
@@ -139,7 +139,10 @@
           <div class="panel-label">// filter expression (-e)</div>
 
           <div class="input-group">
-            <label class="field-label" for="proto">Protocol</label>
+            <div class="field-label-row">
+              <label class="field-label" for="proto">Protocol</label>
+              <button type="button" class="not-toggle" id="protoNot" aria-pressed="false">NOT</button>
+            </div>
             <select id="proto" class="mono-input filter-proto">
               <option value="">any</option>
               <option value="6">tcp (proto=6)</option>
@@ -154,7 +157,10 @@
             <div class="filter-section">
               <div class="filter-section-label">SOURCE</div>
               <div class="input-group">
-                <label class="field-label" for="srcHost">Host / IP</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="srcHost">Host / IP</label>
+                  <button type="button" class="not-toggle" id="srcHostNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="srcHost"
@@ -166,7 +172,10 @@
                 <div class="field-msg" id="srcHostMsg"></div>
               </div>
               <div class="input-group">
-                <label class="field-label" for="srcPort">Port (sport)</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="srcPort">Port (sport)</label>
+                  <button type="button" class="not-toggle" id="srcPortNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="srcPort"
@@ -182,7 +191,10 @@
             <div class="filter-section">
               <div class="filter-section-label">DESTINATION</div>
               <div class="input-group">
-                <label class="field-label" for="dstHost">Host / IP</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="dstHost">Host / IP</label>
+                  <button type="button" class="not-toggle" id="dstHostNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="dstHost"
@@ -194,7 +206,10 @@
                 <div class="field-msg" id="dstHostMsg"></div>
               </div>
               <div class="input-group">
-                <label class="field-label" for="dstPort">Port (dport)</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="dstPort">Port (dport)</label>
+                  <button type="button" class="not-toggle" id="dstPortNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="dstPort"
@@ -210,7 +225,10 @@
             <div class="filter-section">
               <div class="filter-section-label">EITHER DIRECTION</div>
               <div class="input-group">
-                <label class="field-label" for="host">Host / IP</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="host">Host / IP</label>
+                  <button type="button" class="not-toggle" id="hostNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="host"
@@ -222,7 +240,10 @@
                 <div class="field-msg" id="hostMsg"></div>
               </div>
               <div class="input-group">
-                <label class="field-label" for="port">Port</label>
+                <div class="field-label-row">
+                  <label class="field-label" for="port">Port</label>
+                  <button type="button" class="not-toggle" id="portNot" aria-pressed="false">NOT</button>
+                </div>
                 <input
                   type="text"
                   id="port"
